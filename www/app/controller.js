@@ -1,0 +1,31 @@
+$(document).ready(function () {
+    // Display Speak Message
+    function DisplayMessage(message) {
+        $(".siri-message li:first").text(message);
+        $('.siri-message').textillate('start');
+
+        // Also update the status if it's a listening message
+        if (message.includes("Listening")) {
+            $("#listeningStatus").show();
+            $("#listeningStatus").removeClass("alert-info").addClass("alert-success");
+            $("#listeningStatus").html('<i class="bi bi-mic-fill"></i> <strong>Voice Assistant Active</strong><br><small>Say "stop" to stop me</small>');
+        }
+    }
+
+    // Display hood
+    function ShowHood() {
+        $("#Oval").attr("hidden", false);
+        $("#SiriWave").attr("hidden", true);
+    }
+    
+    // Update voice assistant status
+    function UpdateVoiceAssistantStatus(isActive) {
+        if (isActive) {
+            $("#listeningStatus").show();
+            $("#listeningStatus").removeClass("alert-info").addClass("alert-success");
+            $("#listeningStatus").html('<i class="bi bi-mic-fill"></i> <strong>Voice Assistant Active</strong><br><small>Say "stop" to stop me</small>');
+        } else {
+            $("#listeningStatus").hide();
+        }
+    }
+});

@@ -1,0 +1,124 @@
+Spitch AI - User Manual
+=======================
+
+Welcome to Spitch AI! This guide will help you get the most out of your new assistant.
+
+**A Note on Commands:** Spitch is designed to understand natural language. While the commands below are good examples, don't be afraid to try your own phrasing. If Spitch is unsure what you mean, it will ask for clarification. For best results, speak clearly and provide specific details.
+
+---
+
+## Basic Commands
+
+*   **Time & Date:** "What time is it?", "What's the date today?"
+*   **Open Applications:** "Open notepad", "Launch Chrome"
+*   **Web Search:** "Search for the latest AI news", "Google how to make a perfect omelette"
+*   **Calculator:** "What is 25 times 8?", "Calculate 100 divided by 4"
+*   **System Control:** "Take a screenshot", "What are my computer specs?"
+*   **Location:** "Set my location to New York"
+*   **Weather:** "What's the weather like?", "What's the 5-day forecast?"
+*   **Jokes:** "Tell me a joke"
+*   **Help:** "What can you do?"
+
+---
+
+## Music & Video Controls (Spotify & YouTube)
+
+*   **Play Music (Spotify):** "Play [song name] on Spotify"
+    *   _Example:_ "Play Cornfield Chase on Spotify"
+*   **Play Video (YouTube):** "Play [video name] on YouTube"
+    *   _Example:_ "Play a tutorial on Python on YouTube"
+*   **Pause Playback:** "Pause the song", "Pause YouTube"
+*   **Resume Playback:** "Resume the music", "Continue playing"
+
+---
+
+## Important Note on Spotify
+Some Spotify features, such as pausing, resuming, and skipping tracks via voice command, require a **Spotify Premium** account. This is a limitation of the Spotify API. If you have a free account, Spitch can still play music for you, but playback control may be limited.
+
+---
+
+## Advanced Prompts
+Spitch can help with more complex tasks. Here are some examples to get you started.
+
+### 🎬 YouTube
+*   "Find me the latest videos about [topic]."
+*   "Give me video title ideas for a [topic] channel."
+*   "What are some YouTube SEO strategies to grow my channel?"
+
+### 🎧 Spotify
+*   "Play music similar to [artist/song/genre]."
+*   "Create a playlist called [name]."
+*   "Play my Discover Weekly playlist."
+*   "I'm feeling sad — play something comforting."
+
+---
+
+## Troubleshooting
+
+*   **Command Not Understood?** If Spitch doesn't understand your command, try rephrasing it. For example, instead of "Buzz the song," try "Pause the song" or "Stop the music."
+*   **Spotify Not Working?**
+    1.  Ensure the Spotify app is open on your computer.
+    2.  Make sure you are logged in and can play music from the app directly.
+    3.  Remember that playback controls like pause/resume may require a Premium account.
+*   **Application Not Opening?** Make sure the application is installed and that you're using the correct name (e.g., "Google Chrome" vs. "Chrome").
+
+---
+
+## Advanced YouTube Prompts
+
+### 🎬 Search & Discovery
+*   "Find me the latest videos about [topic]."
+    *   _Example:_ "Find me the latest videos about AI in healthcare."
+*   "Show me beginner tutorials on [skill/topic]."
+    *   _Example:_ "Show me beginner tutorials on photo editing."
+
+### 🎥 Content Creation
+*   "Give me video title ideas for a [topic] channel."
+*   "Write a YouTube video script intro for [video topic]."
+*   "Suggest thumbnail ideas and colors for a [type] video."
+*   "Create a YouTube Shorts concept under 60 seconds about [topic]."
+*   "Write an engaging video description for [topic]."
+
+### 💬 Engagement & Community
+*   "What questions should I ask my audience in a [topic] video?"
+*   "Suggest a call to action for viewers."
+*   "What community post should I create to boost engagement?"
+*   "Give me ideas for polls for my YouTube Community tab."
+
+### 📈 Strategy & Monetization
+*   "What are some YouTube SEO strategies to grow my channel?"
+*   "How do I optimize my videos for more watch time?"
+*   "What are the YouTube monetization requirements?"
+*   "Suggest passive income strategies for a small YouTube creator."
+*   "How do I get brand sponsorships for my channel?"
+
+---
+
+## Advanced Spotify Prompts
+
+### 🎧 Music Discovery
+*   "Play music similar to [artist/song/genre] on Spotify."
+    *   _Example:_ "Play music similar to Coldplay on Spotify."
+*   "Find trending songs on Spotify."
+*   "What are the top 10 songs on Spotify right now?"
+*   "Suggest chill music for studying on Spotify."
+*   "Recommend a playlist for [activity/mood] on Spotify."
+    *   _Examples:_ "…for working out," "…for a rainy day"
+
+### 🎵 Playlist Management
+*   "Create a playlist called [name] on Spotify."
+*   "Add this song to my [playlist name] playlist on Spotify."
+*   "Play my Discover Weekly playlist on Spotify."
+
+### 🧠 Mood-Based Prompts
+*   "Play something relaxing on Spotify."
+*   "I'm feeling sad — play something comforting on Spotify."
+*   "I need a boost — play motivational tracks on Spotify."
+
+### 🎙 Podcasts
+*   "Find a true crime podcast with high ratings on Spotify."
+*   "Play the latest episode of [podcast name] on Spotify."
+
+### 📈 Stats & Insights
+*   "What's my most played song this week on Spotify?"
+*   "Who are my most listened-to artists on Spotify?" 
