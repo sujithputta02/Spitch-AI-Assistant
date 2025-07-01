@@ -171,9 +171,3 @@ Pull requests and issues are welcome! Help improve Spitch by adding features, fi
 ## 📢 Feedback
 
 Open an issue or leave feedback on the project repository. Your suggestions help make Spitch better!
-
----
-
-## 📄 License
-
-MIT License. See `LICENSE` for details.
