@@ -1,141 +1,179 @@
-# Spitch AI Assistant
-Spitch is a desktop AI assistant built using Python that can perform various tasks such as answering questions like ChatGPT, opening desktop applications, browsing websites, and even making phone and WhatsApp calls. This project is designed to be versatile and extensible, with the ability to add more functionalities easily. It integrates the Hugging Face API, a free ChatGPT alternative to simulate conversation, and offers multiple activation methods for user commands.
+# 🗣️ Spitch AI Assistant - Your Local AI-Powered Desktop Assistant
 
-## Demo Video
-You can check out the demo by clicking on the below image
+**Spitch is a modern, extensible desktop AI assistant powered by local LLMs (Ollama) and advanced APIs. It can answer questions, control your desktop, play music, browse the web, and more—all via voice or text.**
 
-[![Demo Video](https://youtu.be/cB9GxhcI2BM)
+---
 
+## ✨ Features
 
-## Features
+- **Conversational AI**: Natural language chat, context awareness, and general knowledge (Ollama LLMs, OpenAI fallback)
+- **Voice & Text Input**: Activate by voice or type commands in the web UI
+- **App & Web Control**: Open desktop apps, launch websites, search the web
+- **Spotify Integration**: Play any song, artist, or playlist using the official Spotify API
+- **YouTube Control**: Search and play YouTube videos
+- **System Utilities**: Take screenshots, tell time/date, control system apps
+- **Extensible**: Modular Python architecture for easy feature addition
+- **Configurable**: All settings in `config.py` (API keys, assistant name, toggles)
 
-* **Voice Activation:** Activate Spitch by saying "Spitch."
-* **Text Input:** Type your queries and press enter to receive a response.
-* **App Control:** Open applications like Notepad and OneNote.
-* **Website Navigation:** Open websites like YouTube and Canva.
-* **Multimedia Control:** Search and play specific videos on YouTube.
-* **Phone and WhatsApp Communication:** Make calls or send messages.
+---
 
-## Technology Used:
-- #### Languages:
-  - ![PYTHON](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=darkgreen)
-  - ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-  - ![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-  - ![JAVASCRIPT](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
-- #### FrameWork:
-  - ![BOOTSTRAP](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
-- #### API used for:
-  - Hugging Face API ![Hugging Face API](https://github.com/user-attachments/assets/17108a47-2fbf-4ea7-bac7-b66e3fafe9e0)
+## 🚀 Quick Start
 
-## Installation
-
-### Prerequisites
-Make sure you have Python installed. Then, install the following packages:
-
+### 1. **Clone the Repository**
 ```bash
-beautifulsoup4==4.12.3
-blinker==1.8.2
-bottle @ git+https://github.com/bottlepy/bottle.git@3fdb8b2a2e0d1641374b53ef2b051fe7f54508b5
-bottle-websocket==0.2.9
-certifi==2024.7.4
-cffi==1.16.0
-charset-normalizer==3.3.2
-click==8.1.7
-colorama==0.4.6
-comtypes==1.4.4
-Eel==0.16.0
-enum34==1.1.10
-Flask==3.0.3
-future==1.0.0
-gevent==24.2.1
-gevent-websocket==0.10.1
-greenlet==3.0.3
-hugchat==0.4.8
-idna==3.7
-itsdangerous==2.2.0
-Jinja2==3.1.4
-MarkupSafe==2.1.5
-MouseInfo==0.1.3
-numpy==2.0.0
-pillow==10.4.0
-playsound==1.2.2
-pocketsphinx==5.0.3
-psutil==6.0.0
-pvporcupine==1.9.5
-PyAudio==0.2.14
-PyAutoGUI==0.9.54
-pycparser==2.22
-PyGetWindow==0.0.9
-PyMsgBox==1.0.9
-pyparsing==3.1.2
-pyperclip==1.9.0
-pypiwin32==223
-PyRect==0.2.0
-PyScreeze==0.1.30
-pyttsx3==2.90
-pytweening==1.2.0
-pywhatkit==5.4
-pywin32==306
-requests==2.32.3
-requests-toolbelt==1.0.0
-setuptools==70.2.0
-sounddevice==0.4.7
-soupsieve==2.5
-SpeechRecognition==3.10.4
-typing_extensions==4.12.2
-urllib3==2.2.2
-Werkzeug==3.0.3
-whichcraft==0.6.1
-wikipedia==1.4.0
-zope.event==5.0
-zope.interface==6.4.post2
+git clone https://github.com/sujithputta02/spitch-ai-assistant.git
+cd spitch-ai-assistant
 ```
 
-### Setup Instructions
-
-**Clone the Repository:**
-   ```bash
-   git clone https://github.com/yourusername/Spitch-ai-assistant.git
-   cd Spitch-ai-assistant
+### 2. **Install Dependencies**
+```bash
+python -m pip install -r requirements.txt
 ```
-## Usage
 
-### Activating the Assistant
-There are several ways to activate Spitch:
+### 3. **Configure API Keys**
+Edit `config.py` and set:
+- **Ollama**: (Recommended) Install Ollama from https://ollama.ai/ and pull a model (e.g., `ollama pull phi3`)
+- **OpenAI API Key**: (Optional fallback)
+- **Spotify API Keys**: [Get from Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+- **Weather/News API Keys**: (Optional)
 
-- **Voice Activation:** Simply say "Spitch."
-- **Text Input:** Type your query in the input box (e.g., "How are you?").
-- **Keyboard Shortcut:** Press `Window + J` to activate the assistant.
+### 4. **Run the Assistant**
+```bash
+python main.py
+```
+This will launch the web UI (Eel) and start listening for commands.
 
-### Supported Commands
+---
 
-#### Query Answering
-Ask Spitch questions, and she'll answer using the Hugging Face API, a free ChatGPT alternative.
-**Example:** "Tell me about yourself"
+## 🛠️ Configuration
 
-#### Opening Applications
+All settings are in `config.py`:
+- **Assistant Name**: `ASSISTANT_NAME = "Spitch"`
+- **Ollama Model/URL**: `OLLAMA_DEFAULT_MODEL`, `OLLAMA_BASE_URL`
+- **OpenAI API Key**: `OPENAI_API_KEY`
+- **Spotify Credentials**: `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REDIRECT_URI`
+- **Feature Toggles**: Enable/disable voice, wake word, etc.
+- **API Keys**: Weather, News, etc.
+
+---
+
+## 🎤 Usage
+
+- **Voice Activation**: Click the mic button or say "Spitch" (if wake word enabled)
+- **Text Input**: Type in the web UI and press Enter
+- **Keyboard Shortcut**: (If configured)
+
+### Example Commands
 - "Open Notepad"
-- "Open OneNote"
+- "Play Shape of You from Spotify"
+- "Search for Python tutorials"
+- "What's the weather like?"
+- "Take a screenshot"
+- "Tell me a joke"
 
-#### Website Navigation
-- "Open YouTube"
-- "Open Canva"
+## 🗣️ Prompt Examples
 
-#### Multimedia Search
-- "Play the video of the 99 names of Allah on YouTube"
+Spitch understands natural language! Here are some example prompts you can try (but feel free to use your own phrasing):
 
-#### Phone and Messaging
-- "Spitch, make a phone call to Ali Hassan"
-- "Spitch, send a message to Ali Hassan"
-- "Spitch, make a video call on WhatsApp"
+### Basic Commands
+- "What time is it?"
+- "What's the date today?"
+- "Open notepad"
+- "Launch Chrome"
+- "Search for the latest AI news"
+- "Google how to make a perfect omelette"
+- "What is 25 times 8?"
+- "Take a screenshot"
+- "What are my computer specs?"
+- "Set my location to New York"
+- "What's the weather like?"
+- "What's the 5-day forecast?"
+- "Tell me a joke"
+- "What can you do?"
 
-### Future Enhancements
-- **Custom Application and Website Management:** Users will be able to add their applications and websites without needing to work with databases or SQL.
-- **Expanded Application Support:** Add support for more desktop and web applications.
-- **Customizable Settings:** Implement user-configurable settings for a more personalized experience.
+### Music & Spotify
+- "Play Cornfield Chase on Spotify"
+- "Play music similar to Coldplay on Spotify"
+- "Create a playlist called Road Trip on Spotify"
+- "Play my Discover Weekly playlist"
+- "Pause the song"
+- "Resume the music"
+- "I'm feeling sad — play something comforting on Spotify"
+- "Find trending songs on Spotify"
+- "What are the top 10 songs on Spotify right now?"
+- "Recommend a playlist for working out on Spotify"
+- "Add this song to my Chill Vibes playlist on Spotify"
+- "Play something relaxing on Spotify"
+- "I need a boost — play motivational tracks on Spotify"
+- "Find a true crime podcast with high ratings on Spotify"
+- "Play the latest episode of The Daily on Spotify"
+- "What's my most played song this week on Spotify?"
+- "Who are my most listened-to artists on Spotify?"
 
-## Contributing
-Feel free to open issues or submit pull requests to improve the project. Contributions are welcome, whether it’s adding new features, fixing bugs, or improving documentation.
+### YouTube & Video
+- "Play a tutorial on Python on YouTube"
+- "Pause YouTube"
+- "Find me the latest videos about AI in healthcare"
+- "Show me beginner tutorials on photo editing"
+- "Give me video title ideas for a travel channel"
+- "Write a YouTube video script intro for a tech review"
+- "Suggest thumbnail ideas and colors for a gaming video"
+- "Create a YouTube Shorts concept under 60 seconds about productivity"
+- "Write an engaging video description for a cooking tutorial"
+- "What are some YouTube SEO strategies to grow my channel?"
+- "How do I optimize my videos for more watch time?"
 
-## Feedback
-If you have any suggestions or want to request additional features, leave a comment on the YouTube tutorial series. Your feedback is highly appreciated!
+### Advanced & Community
+- "What questions should I ask my audience in a fitness video?"
+- "Suggest a call to action for viewers"
+- "What community post should I create to boost engagement?"
+- "Give me ideas for polls for my YouTube Community tab"
+- "What are the YouTube monetization requirements?"
+- "Suggest passive income strategies for a small YouTube creator"
+- "How do I get brand sponsorships for my channel?"
+
+---
+
+## 🧩 Architecture
+
+- **main.py**: Launches the Eel web UI and manages voice/text input
+- **app.py**: Flask API endpoints for advanced integrations
+- **engine/**: Core logic (features, AI, Spotify, commands, etc.)
+- **www/**: Web UI (HTML, CSS, JS)
+- **config.py**: All configuration
+
+---
+
+## 🧑‍💻 Extending Spitch
+
+- Add new features in `engine/features.py` or as new modules
+- Add new web UI elements in `www/`
+- Use the modular command system for easy intent/action mapping
+
+---
+
+## 🩹 Troubleshooting
+
+- **Ollama not responding**: Ensure Ollama is running and the model is pulled (`ollama pull phi3`)
+- **Spotify issues**: Make sure Spotify is open and credentials are correct
+- **Voice not working**: Check microphone permissions
+- **API errors**: Double-check your API keys in `config.py`
+- **App not starting**: Use Python 3.12+, check dependencies
+
+---
+
+## 🤝 Contributing
+
+Pull requests and issues are welcome! Help improve Spitch by adding features, fixing bugs, or enhancing documentation.
+
+---
+
+## 📢 Feedback
+
+Open an issue or leave feedback on the project repository. Your suggestions help make Spitch better!
+
+---
+
+## 📄 License
+
+MIT License. See `LICENSE` for details.
