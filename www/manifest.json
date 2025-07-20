@@ -1,0 +1,26 @@
+{
+  "name": "Spitch AI Assistant",
+  "short_name": "Spitch",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1a293e",
+  "theme_color": "#1a293e",
+  "description": "Your local AI-powered desktop assistant.",
+  "icons": [
+    {
+      "src": "assets/img/spitch.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "assets/img/spitch-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/img/spitch-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

@@ -1,0 +1,8 @@
+envSophia/
+__pycache__
+g_env/ 
+whisper_models/ 
+vosk-model-small-en-us-0.15/ 
+.cache/ 
+__pycache__/ 
+*.db 

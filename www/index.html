@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPITCH</title>
+    <link rel="shortcut icon" href="assets/img/spitch.ico">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <link rel="stylesheet" href="assets/vendore/texllate/animate.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Beta Banner -->
+    <div style="background: #ff9800; color: #fff; text-align: center; padding: 8px 0; font-weight: bold; letter-spacing: 1px; font-size: 1.1rem;">
+        🚧 Spitch AI is in <b>Beta</b> — Features and performance are actively being improved!
+    </div>
+    <!-- Install as App Button -->
+    <div id="installAppBtnContainer" style="position:fixed;top:16px;right:24px;z-index:1001;">
+        <button id="installAppBtn" title="Install Spitch as Desktop App" style="background:none;border:none;outline:none;cursor:pointer;font-size:1.7rem;display:none;">
+            <i class="bi bi-display"></i>
+        </button>
+    </div>
+    <div id="installInstructions" style="display:none;position:fixed;top:60px;right:24px;z-index:1001;background:#232b3a;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 2px 12px #0008;font-size:1rem;max-width:320px;"></div>
+    <div class="container">
+        <section id="Oval" class="mb-4">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <div id="loader-wrapper">
+                        <div id="loader">
+                            <div id="loader1">
+                            </div>
+                        </div>
+                        <p>SPITCH</p>
+                    </div>
+                    <h5 class="text-light text text-center">Ask me anything</h5>
+                    
+                    <!-- Voice Assistant Status -->
+                    <div class="text-center mb-3">
+                        <div id="listeningStatus" class="alert alert-success" style="display: none;">
+                            <i class="bi bi-mic-fill"></i> <strong>Voice Assistant Active</strong>
+                            <br><small>Say "stop" to stop me</small>
+                        </div>
+                        <button id="TestBtn" class="btn btn-outline-warning btn-sm" title="Test Basic Commands">
+                            <i class="bi bi-play-circle"></i> Test Commands
+                        </button>
+                    </div>
+                    
+                    <!-- /****************************Input Box******************************/ -->
+
+                    <div class="col-md-12 mt-4 pt-4">
+                        <div class="text-center">
+                            <div id="textInput" class="d-flex">
+                                <input type="text" class="input-field" name="chatbox" id="chatbox"
+                                    placeholder="Type your command here and press Enter... (e.g., 'what time is it', 'open notepad', 'tell me a joke')">
+                                <button id="MicBtn" class="glow-on-hover" title="Start Voice Assistant"><i class="bi bi-mic"></i></button>
+                                <button id="ChatBtn" class="glow-on-hover" title="Send Text Command" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i
+                                        class="bi bi-chat-dots"></i></button>
+                                <button id="SettingsBtn" class="glow-on-hover" title="Settings"><i class="bi bi-gear"></i></button>
+                            </div>
+                            <small class="text-light mt-2 d-block">💡 Tip: Click the microphone to start voice commands, or type your commands in the text box</small>
+                        </div>
+                    </div>
+                    <!-- /****************************Input Box End******************************/ -->
+                 </div>
+                <div class="col-md-1"></div>
+             </div>
+        </section>
+
+        <section id="SiriWave" class="mb-4" hidden>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+                            <div>
+                                <h5 class="text-start text-light mb-4 siri-message" style="font-size: 26px;">
+                                    Hello, I am S.P.I.T.C.H</h5>
+                                <div id="siri-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!--Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="main.js"></script>
+
+    <!-- Texllate js -->
+    <script src="assets/vendore/texllate/jquery.fittext.js"></script>
+    <script src="assets/vendore/texllate/jquery.lettering.js"></script>
+    <script src="http://jschr.github.io/textillate/jquery.textillate.js"></script>
+    <script type="text/javascript" src="/eel.js"></script>
+
+    <!-- Siri wave link -->
+    <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
+    <script src="./controller.js"></script>
+
+    <script>
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+    </script>
+</body>
+</html>
