@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, request, jsonify
 import webbrowser
 import threading
 import os
-from engine.command import takeCommand, set_voice_language, processTextCommand, test_command, allCommands
+from engine.command import takeCommand, set_voice_language, processTextCommand, test_command, allCommands, get_supported_languages, get_current_language
 
 app = Flask(__name__, static_folder="www")
 
@@ -55,6 +55,16 @@ def api_test_command():
 def api_all_commands():
     allCommands()
     return jsonify({'status': 'ok'})
+
+@app.route('/api/get_supported_languages', methods=['GET'])
+def api_get_supported_languages():
+    languages = get_supported_languages()
+    return jsonify(languages)
+
+@app.route('/api/get_current_language', methods=['GET'])
+def api_get_current_language():
+    current_lang = get_current_language()
+    return jsonify({'language': current_lang})
 
 def open_browser():
     webbrowser.open_new('http://localhost:8000/')

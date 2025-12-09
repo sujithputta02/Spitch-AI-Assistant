@@ -1,173 +1,250 @@
-# 🗣️ Spitch AI Assistant - Your Local AI-Powered Desktop Assistant
+# 🧠 Spitch AI Assistant (JARVIS-Level)
 
-**Spitch is a modern, extensible desktop AI assistant powered by local LLMs (Ollama) and advanced APIs. It can answer questions, control your desktop, play music, browse the web, and more—all via voice or text.**
+**The Ultimate Local AI Desktop Assistant with Vision & Multimodal Chat**
+
+Spitch is a cutting-edge, JARVIS-like assistant that controls your computer, understands natural language, and proactively helps you get things done. Powered by local LLMs (Ollama) and advanced Google Gemini models, it features context awareness, persistent memory, intelligent task automation, **computer vision**, and **multimodal chat support**.
 
 ---
 
-## ✨ Features
+## ✨ Features Breakdown
 
-- **Conversational AI**: Natural language chat, context awareness, and general knowledge (Ollama LLMs, OpenAI fallback)
-- **Voice & Text Input**: Activate by voice or type commands in the web UI
-- **App & Web Control**: Open desktop apps, launch websites, search the web
-- **Spotify Integration**: Play any song, artist, or playlist using the official Spotify API
-- **YouTube Control**: Search and play YouTube videos
-- **System Utilities**: Take screenshots, tell time/date, control system apps
-- **Extensible**: Modular Python architecture for easy feature addition
-- **Configurable**: All settings in `config.py` (API keys, assistant name, toggles)
+### 🗣️ True Natural Language Understanding
+*   **Context Aware**: "Open calculator", then "calculate 5+5", then "close **it**". Spitch understands context and pronouns.
+*   **Conversational Memory**: Remembers your previous interactions and preferences across sessions.
+*   **No "Commands"**: Just talk naturally. "I want to write a python script" instead of "open pattern X".
+
+### 👁️ **NEW: Vision & Multimodal Capabilities**
+*   **Image Upload**: Attach images directly in the chat interface using the 📎 paperclip button.
+*   **Visual Understanding**: Ask questions about images: "What's in this screenshot?", "Explain this diagram", "What code is shown here?"
+*   **Screen Analysis**: "Take a screenshot and tell me what's on my screen" - Spitch can capture and analyze your display.
+*   **Powered by Gemini Vision**: Uses Google's Gemini 1.5 Flash for advanced image understanding.
+
+### ⚙️ **NEW: Customizable Settings**
+*   **Voice Selection**: Choose from multiple TTS voices (Male/Female/Microsoft voices).
+*   **Speed Control**: Adjust how fast Spitch speaks (100-250 WPM).
+*   **Default Location**: Set your city for personalized weather and local information.
+*   **Persistent Preferences**: All settings are saved and remembered across sessions.
+
+### ⚡ Seamless Task Execution & Browser Control
+*   **Browser Integration**: "Open Gemini **in browser**" or "Search for Python tutorials" launches your default browser (Chrome/Edge/Firefox) instantly.
+*   **Robust Automation**: 3-stage retry logic ensures commands work even if apps are slow to load.
+*   **App Control**: Precise control over desktop applications (Notepad, Calculator, Spotify, etc.).
+*   **Window Management**: Handles minimized windows, multi-monitor setups, and focus stealing.
+
+### 🔮 Proactive Assistance
+*   **Smart Suggestions**: Suggests actions based on the time of day (e.g., "Good morning, open your email?").
+*   **Pattern Learning**: Learns your habits (e.g., "You usually open Spotify at 2 PM, shall I do that?").
+*   **System Monitoring**: Real-time health checks on CPU, memory, and disk usage.
+
+### 📂 File Intelligence
+*   **Smart Organization**: "Organize my downloads" auto-sorts files into Documents, Images, Code, etc.
+*   **Content Search**: "Search for that report I worked on last week".
+*   **Duplicate Detection**: Finds and helps clean up duplicate files.
+*   **Recent Access**: Tracks your workflow to surface relevant files.
+
+### 💻 Developer Tools
+*   **Git Integration**: "Check git status", "Commit changes with message 'update'", "Push to remote".
+*   **Shell Integration**: Run terminal commands directly via voice or text.
+*   **Code Management**: Intelligent project root detection and management.
+*   **Safety Sandbox**: Validates potentially dangerous commands before execution.
+
+### 🧩 **NEW: Dynamic Skill Registry**
+*   **Extensible Architecture**: Easily add new skills without modifying core code.
+*   **Auto-Discovery**: New skills are automatically recognized by the AI.
+*   **Centralized Management**: All capabilities managed through a unified registry system.
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. **Clone the Repository**
+### 1. Installation
 ```bash
 git clone https://github.com/sujithputta02/spitch-ai-assistant.git
 cd spitch-ai-assistant
+pip install -r requirements.txt
 ```
 
-### 2. **Install Dependencies**
-```bash
-python -m pip install -r requirements.txt
-```
+### 2. Configuration
+Edit `config.py` with your preferences:
+*   **AI Backend**: Set `OLLAMA_BASE_URL` or API keys for Gemini/OpenAI.
+*   **Google Gemini API Key**: **Required** for vision features - Get yours at [Google AI Studio](https://makersuite.google.com/app/apikey).
+*   **Spotify**: Add Client ID/Secret for music control.
+*   **Assistant Name**: Customize your wake word (default: "Spitch").
 
-### 3. **Configure API Keys**
-Edit `config.py` and set:
-- **Ollama**: (Recommended) Install Ollama from https://ollama.ai/ and pull a model (e.g., `ollama pull phi3`)
-- **OpenAI API Key**: (Optional fallback)
-- **Spotify API Keys**: [Get from Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-- **Weather/News API Keys**: (Optional)
-
-### 4. **Run the Assistant**
+### 3. Run
 ```bash
 python main.py
 ```
-This will launch the web UI (Eel) and start listening for commands.
+This launches the modern web UI and starts the voice listener.
 
 ---
 
-## 🛠️ Configuration
+## 🎤 Capabilities & Examples
 
-All settings are in `config.py`:
-- **Assistant Name**: `ASSISTANT_NAME = "Spitch"`
-- **Ollama Model/URL**: `OLLAMA_DEFAULT_MODEL`, `OLLAMA_BASE_URL`
-- **OpenAI API Key**: `OPENAI_API_KEY`
-- **Spotify Credentials**: `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REDIRECT_URI`
-- **Feature Toggles**: Enable/disable voice, wake word, etc.
-- **API Keys**: Weather, News, etc.
+### 🧠 Intelligent Conversation
+> **User**: "I need to calculate the budget for my trip."
+> **Spitch**: Opens Calculator.
+> **User**: "It's 500 for flight plus 300 for hotel."
+> **Spitch**: Types "500+300" into Calculator.
+> **User**: "Close it."
+> **Spitch**: Closes Calculator.
 
----
+### 👁️ **NEW: Vision & Image Understanding**
+> **User**: *[Uploads screenshot of code]* "What does this code do?"
+> **Spitch**: "This Python code defines a function that calculates the Fibonacci sequence using recursion..."
 
-## 🎤 Usage
+> **User**: "Take a screenshot and tell me what's on my screen."
+> **Spitch**: *[Captures screen]* "I see a web browser with a GitHub repository open, showing the README file..."
 
-- **Voice Activation**: Click the mic button or say "Spitch" (if wake word enabled)
-- **Text Input**: Type in the web UI and press Enter
-- **Keyboard Shortcut**: (If configured)
+> **User**: *[Uploads diagram]* "Explain this architecture."
+> **Spitch**: "This diagram shows a microservices architecture with..."
 
-### Example Commands
-- "Open Notepad"
-- "Play Shape of You from Spotify"
-- "Search for Python tutorials"
-- "What's the weather like?"
-- "Take a screenshot"
-- "Tell me a joke"
+### 🌐 Browser & Web Tasks
+*   "Open Gemini in browser and search for AI news."
+*   "Launch ChatGPT in my browser."
+*   "Search for 'best pizza near me' on Google."
 
-## 🗣️ Prompt Examples
+### 📂 File Management
+*   "Organize all files in my Downloads folder."
+*   "Find duplicate images in Pictures."
+*   "Show me the files I worked on yesterday."
 
-Spitch understands natural language! Here are some example prompts you can try (but feel free to use your own phrasing):
+### 💻 Developer Workflow
+*   "What's the status of this repo?"
+*   "Commit all changes with message 'Fixed login bug'."
+*   "Run 'npm install' for me."
 
-### Basic Commands
-- "What time is it?"
-- "What's the date today?"
-- "Open notepad"
-- "Launch Chrome"
-- "Search for the latest AI news"
-- "Google how to make a perfect omelette"
-- "What is 25 times 8?"
-- "Take a screenshot"
-- "What are my computer specs?"
-- "Set my location to New York"
-- "What's the weather like?"
-- "What's the 5-day forecast?"
-- "Tell me a joke"
-- "What can you do?"
+### 🎵 Media & Entertainment
+*   "Play 'Bohemian Rhapsody' on Spotify."
+*   "Find a tutorial on Python decorators on YouTube."
+*   "Set volume to 50%."
 
-### Music & Spotify
-- "Play Cornfield Chase on Spotify"
-- "Play music similar to Coldplay on Spotify"
-- "Create a playlist called Road Trip on Spotify"
-- "Play my Discover Weekly playlist"
-- "Pause the song"
-- "Resume the music"
-- "I'm feeling sad — play something comforting on Spotify"
-- "Find trending songs on Spotify"
-- "What are the top 10 songs on Spotify right now?"
-- "Recommend a playlist for working out on Spotify"
-- "Add this song to my Chill Vibes playlist on Spotify"
-- "Play something relaxing on Spotify"
-- "I need a boost — play motivational tracks on Spotify"
-- "Find a true crime podcast with high ratings on Spotify"
-- "Play the latest episode of The Daily on Spotify"
-- "What's my most played song this week on Spotify?"
-- "Who are my most listened-to artists on Spotify?"
+### 🔮 Proactive & System
+*   *(Morning)* "Good morning! Should I open your work apps?"
+*   *(System Alert)* "Disk space is running low (92%). Should we clean temporary files?"
 
-### YouTube & Video
-- "Play a tutorial on Python on YouTube"
-- "Pause YouTube"
-- "Find me the latest videos about AI in healthcare"
-- "Show me beginner tutorials on photo editing"
-- "Give me video title ideas for a travel channel"
-- "Write a YouTube video script intro for a tech review"
-- "Suggest thumbnail ideas and colors for a gaming video"
-- "Create a YouTube Shorts concept under 60 seconds about productivity"
-- "Write an engaging video description for a cooking tutorial"
-- "What are some YouTube SEO strategies to grow my channel?"
-- "How do I optimize my videos for more watch time?"
-
-### Advanced & Community
-- "What questions should I ask my audience in a fitness video?"
-- "Suggest a call to action for viewers"
-- "What community post should I create to boost engagement?"
-- "Give me ideas for polls for my YouTube Community tab"
-- "What are the YouTube monetization requirements?"
-- "Suggest passive income strategies for a small YouTube creator"
-- "How do I get brand sponsorships for my channel?"
+### ⚙️ **NEW: Settings & Customization**
+*   Click the **⚙️ Gear Icon** to access settings.
+*   Change voice, adjust speed, set your location.
+*   All preferences are saved automatically.
 
 ---
 
 ## 🧩 Architecture
 
-- **main.py**: Launches the Eel web UI and manages voice/text input
-- **app.py**: Flask API endpoints for advanced integrations
-- **engine/**: Core logic (features, AI, Spotify, commands, etc.)
-- **www/**: Web UI (HTML, CSS, JS)
-- **config.py**: All configuration
+### Core Components
+*   **`engine/ai_intent_parser.py`**: The "Brain". Uses LLMs to parse complex, non-standard user requests into actionable plans.
+*   **`engine/ai_task_agent.py`**: The "Hand". Executes multi-step workflows with retry logic and error recovery.
+*   **`engine/session_manager.py`**: The "Memory". Tracks conversation history and context (short-term).
+*   **`engine/memory_bank.py`**: The "Long-term Memory". Stores user preferences and learned patterns.
+*   **`engine/proactive_assistant.py`**: The "Conscience". Monitors system state and suggests actions.
+*   **`engine/file_intelligence.py`**: File system manager.
+*   **`engine/dev_tools.py`**: Git and terminal integration.
+
+### **NEW: Advanced Modules**
+*   **`engine/skill_registry.py`**: Dynamic skill management system for extensibility.
+*   **`engine/vision_agent.py`**: Computer vision capabilities using Gemini Vision API.
+*   **`engine/google_gemini.py`**: Multimodal AI integration (text + image processing).
+*   **`engine/safety_sandbox.py`**: Command validation and security layer.
+*   **`engine/user_prefs.py`**: User settings and preferences management.
+
+### Frontend
+*   **`www/index.html`**: Modern, responsive web interface with image upload support.
+*   **`www/main.js`**: Frontend logic for chat, voice, and settings.
+*   **`www/style.css`**: Custom styling for a premium user experience.
 
 ---
 
-## 🧑‍💻 Extending Spitch
+## 🛠️ Recent Updates (Phase 6-9)
 
-- Add new features in `engine/features.py` or as new modules
-- Add new web UI elements in `www/`
-- Use the modular command system for easy intent/action mapping
+### Phase 6: Skill Registry System
+- Implemented dynamic skill registration and management
+- AI now auto-discovers new capabilities
+- Centralized skill execution with error handling
+
+### Phase 7: Vision Agent
+- Added computer vision using Gemini Vision 1.5 Flash
+- Screen capture and analysis capabilities
+- Visual question answering
+
+### Phase 8: Safety Sandbox
+- Command validation before execution
+- Protection against destructive operations
+- Secure shell command handling
+
+### Phase 9: Multimodal Chat
+- Image upload via chat interface (📎 button)
+- Text + image queries to AI
+- Base64 encoding for efficient transfer
+- Integrated vision processing in chat flow
 
 ---
 
-## 🩹 Troubleshooting
+## 📋 Requirements
 
-- **Ollama not responding**: Ensure Ollama is running and the model is pulled (`ollama pull phi3`)
-- **Spotify issues**: Make sure Spotify is open and credentials are correct
-- **Voice not working**: Check microphone permissions
-- **API errors**: Double-check your API keys in `config.py`
-- **App not starting**: Use Python 3.12+, check dependencies
+### Python Dependencies
+```
+eel
+pyttsx3
+SpeechRecognition
+pyautogui
+pygetwindow
+requests
+beautifulsoup4
+pygame
+Pillow
+```
+
+### System Requirements
+- **OS**: Windows 10/11 (primary), macOS/Linux (experimental)
+- **Python**: 3.8+
+- **Browser**: Chrome, Edge, or Firefox
+- **Internet**: Required for AI models (Gemini/OpenAI) and web features
+
+### API Keys (Optional but Recommended)
+- **Google Gemini API**: For vision features and advanced AI
+- **OpenAI API**: Alternative AI backend
+- **Spotify API**: For music control
+
+---
+
+## 🎯 Roadmap
+
+- [ ] **Image Generation**: Add DALL-E/Stable Diffusion integration
+- [ ] **Multi-Language Support**: Expand beyond English
+- [ ] **Mobile App**: iOS/Android companion app
+- [ ] **Cloud Sync**: Sync preferences across devices
+- [ ] **Plugin System**: Community-contributed skills marketplace
+- [ ] **Advanced Automation**: Workflow recording and playback
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests and issues are welcome! Help improve Spitch by adding features, fixing bugs, or enhancing documentation.
+Contributions are welcome! Whether it's a new skill, a bug fix, or a UI enhancement, feel free to open a PR.
+
+### How to Add a New Skill
+1. Create your skill function in `engine/features.py` or a new module
+2. Register it in `engine/skill_registry.py` using `@skill_registry.register_skill()`
+3. The AI will automatically discover and use it!
 
 ---
 
-## 📢 Feedback
+## 📄 License
 
-Open an issue or leave feedback on the project repository. Your suggestions help make Spitch better!
+MIT License - See LICENSE file for details
+
+---
+
+## 🙏 Acknowledgments
+
+- **Google Gemini**: For powerful multimodal AI capabilities
+- **Eel Framework**: For seamless Python-JavaScript integration
+- **Bootstrap**: For responsive UI components
+- **Community Contributors**: For feedback and feature requests
+
+---
+
+**Made with ❤️ by Sujith Putta**
+
+*Star ⭐ this repo if you find it useful!*

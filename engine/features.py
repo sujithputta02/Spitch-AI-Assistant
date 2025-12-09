@@ -1,9 +1,14 @@
 import os
 import re
-import mysql.connector
 import webbrowser
 import urllib.parse
-from playsound import playsound
+try:
+    import pygame
+    pygame.mixer.init()
+    AUDIO_AVAILABLE = True
+except ImportError:
+    AUDIO_AVAILABLE = False
+    print("Audio playback not available - pygame not installed")
 import eel
 import requests
 import json
@@ -15,100 +20,172 @@ import difflib
 from bs4 import BeautifulSoup
 
 from engine.config import ASSISTANT_NAME
-# import pywhatkit as kit  # Commented out to avoid InternetException
 import pyautogui
 import pygetwindow as gw
 from engine.ai_assistant import spitch_ai
-from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-
-
-conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='Sujith@20$',
-    database='spitch_ai'
-)
-cursor = conn.cursor()
 #sound function for playing sound
 def playAssistantSound():
-    music_dir = "www\\assets\\audio\\start_sound.mp3"
-    playsound(music_dir)
+    if AUDIO_AVAILABLE:
+        try:
+            music_dir = "www\\assets\\audio\\start_sound.mp3"
+            pygame.mixer.music.load(music_dir)
+            pygame.mixer.music.play()
+        except Exception as e:
+            print(f"Could not play start sound: {e}")
 
 #click sound for mic button
-
 @eel.expose
 def playClickSound():
-    music_dir = "www\\assets\\audio\\click_sound.mp3"
-    playsound(music_dir)
+    if AUDIO_AVAILABLE:
+        try:
+            music_dir = "www\\assets\\audio\\click_sound.mp3"
+            pygame.mixer.music.load(music_dir)
+            pygame.mixer.music.play()
+        except Exception as e:
+            print(f"Could not play click sound: {e}")
+
+# --- Settings Management ---
+from engine.user_prefs import load_settings, save_setting
+from engine.speak_utils import get_voice_options # Expose this
+
+@eel.expose
+def get_all_settings():
+    """Get all user settings"""
+    return load_settings()
+
+@eel.expose
+def save_all_settings(settings):
+    """Save multiple settings at once"""
+    try:
+        for key, value in settings.items():
+            save_setting(key, value)
+        return True
+    except Exception as e:
+        print(f"Error saving settings: {e}")
+        return False
+
  
+
+def get_installed_applications():
+    """Discover all installed applications on Windows"""
+    apps = {}
+    
+    # Common built-in Windows applications
+    common_apps = {
+        'notepad': 'notepad.exe',
+        'calculator': 'calc.exe',
+        'paint': 'mspaint.exe',
+        'wordpad': 'wordpad.exe',
+        'chrome': 'chrome.exe',
+        'firefox': 'firefox.exe',
+        'edge': 'msedge.exe',
+        'explorer': 'explorer.exe',
+        'control panel': 'control.exe',
+        'task manager': 'taskmgr.exe',
+        'cmd': 'cmd.exe',
+        'command prompt': 'cmd.exe',
+        'powershell': 'powershell.exe',
+        'settings': 'ms-settings:',
+        'file explorer': 'explorer.exe'
+    }
+    apps.update(common_apps)
+    
+    # Scan Start Menu for installed applications
+    start_menu_paths = [
+        os.path.join(os.environ.get('APPDATA', ''), 'Microsoft', 'Windows', 'Start Menu', 'Programs'),
+        os.path.join(os.environ.get('PROGRAMDATA', ''), 'Microsoft', 'Windows', 'Start Menu', 'Programs')
+    ]
+    
+    for start_menu in start_menu_paths:
+        if os.path.exists(start_menu):
+            try:
+                for root, dirs, files in os.walk(start_menu):
+                    for file in files:
+                        if file.endswith('.lnk'):
+                            app_name = file.replace('.lnk', '').lower()
+                            # Clean up common suffixes
+                            app_name = app_name.replace(' - shortcut', '')
+                            full_path = os.path.join(root, file)
+                            apps[app_name] = full_path
+            except Exception as e:
+                print(f"Error scanning Start Menu: {e}")
+    
+    # Scan Program Files for common executables
+    program_files = [
+        os.environ.get('PROGRAMFILES', 'C:\\Program Files'),
+        os.environ.get('PROGRAMFILES(X86)', 'C:\\Program Files (x86)'),
+        os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Programs')
+    ]
+    
+    for pf_dir in program_files:
+        if os.path.exists(pf_dir):
+            try:
+                for item in os.listdir(pf_dir):
+                    item_path = os.path.join(pf_dir, item)
+                    if os.path.isdir(item_path):
+                        # Look for .exe files in the directory
+                        for file in os.listdir(item_path):
+                            if file.endswith('.exe'):
+                                app_name = file.replace('.exe', '').lower()
+                                apps[app_name] = os.path.join(item_path, file)
+            except Exception as e:
+                print(f"Error scanning {pf_dir}: {e}")
+    
+    return apps
 
 def openCommand(query):
     query = query.replace(ASSISTANT_NAME, "")
     query = query.replace("open", "").strip().lower()
     print(f"[openCommand] Query after cleaning: '{query}'")
+    
     if query != "":
         try:
-            # Try to find the application in sys_command table
-            cursor.execute('SELECT name, path FROM sys_command')
-            sys_commands = cursor.fetchall()
-            app_names = [name for name, _ in sys_commands]
-            print(f"[openCommand] App names in DB: {app_names}")
-            match = difflib.get_close_matches(query, app_names, n=1, cutoff=0.6)
+            # Get all installed applications
+            print("[openCommand] Discovering installed applications...")
+            installed_apps = get_installed_applications()
+            print(f"[openCommand] Found {len(installed_apps)} applications")
+            
+            # Try fuzzy matching with installed apps
+            match = difflib.get_close_matches(query, list(installed_apps.keys()), n=1, cutoff=0.6)
             print(f"[openCommand] Fuzzy match result: {match}")
+            
             if match:
                 matched_name = match[0]
-                path = [path for name, path in sys_commands if name == matched_name][0]
+                app_path = installed_apps[matched_name]
                 speak(f"Opening {matched_name}")
-                os.startfile(path)
-                return
-            # If not found, try to find the URL in web_command table
-            cursor.execute('SELECT name, url FROM web_command')
-            web_commands = cursor.fetchall()
-            web_names = [name for name, _ in web_commands]
-            match = difflib.get_close_matches(query, web_names, n=1, cutoff=0.6)
-            if match:
-                matched_name = match[0]
-                url = [url for name, url in web_commands if name == matched_name][0]
-                speak(f"Opening {matched_name}")
-                webbrowser.open(url)
-                return
-            # Try common applications
-            common_apps = {
-                'notepad': 'notepad.exe',
-                'calculator': 'calc.exe',
-                'paint': 'mspaint.exe',
-                'wordpad': 'wordpad.exe',
-                'chrome': 'chrome.exe',
-                'firefox': 'firefox.exe',
-                'edge': 'msedge.exe',
-                'explorer': 'explorer.exe',
-                'control panel': 'control.exe',
-                'task manager': 'taskmgr.exe',
-                'cmd': 'cmd.exe',
-                'powershell': 'powershell.exe'
-            }
-            match = difflib.get_close_matches(query, list(common_apps.keys()), n=1, cutoff=0.6)
-            print(f"[openCommand] Fuzzy match in common apps: {match}")
-            if match:
-                matched_name = match[0]
-                speak(f"Opening {matched_name}")
+                print(f"[openCommand] Opening: {app_path}")
+                
                 try:
-                    os.system(f'start {common_apps[matched_name]}')
+                    # Use different methods depending on file type
+                    if app_path.endswith('.lnk'):
+                        # For shortcuts, use start command
+                        os.system(f'start "" "{app_path}"')
+                    elif app_path.startswith('ms-'):
+                        # For Windows settings URIs
+                        os.system(f'start {app_path}')
+                    else:
+                        # For executables
+                        subprocess.Popen(app_path)
                     return
                 except Exception as e:
+                    print(f"[openCommand] Error opening {matched_name}: {e}")
                     speak(f"Sorry, I couldn't open {matched_name}. Error: {str(e)}")
                 return
-            # If still not found, try to open using os.system
+            
+            # If no match found, try direct execution
+            print(f"[openCommand] No match found, trying direct execution...")
             speak(f"Trying to open {query}")
             try:
-                os.system('start ' + query)
+                os.system('start "" "' + query + '"')
             except Exception as e:
                 speak(f"Sorry, I couldn't open {query}. Please make sure the application is installed or try a different name.")
-            eel.DisplayMessage(f"No matching application found for '{query}'. Please check the name in your database or try a different command.")
+                print(f"[openCommand] Direct execution failed: {e}")
         except Exception as e:
             speak(f"Something went wrong while trying to open {query}: {str(e)}")
+            print(f"[openCommand] Error: {e}")
     else:
         speak("Please specify what you would like me to open.")
+
 
 
 

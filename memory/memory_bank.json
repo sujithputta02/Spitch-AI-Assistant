@@ -1,0 +1,144 @@
+{
+  "user_preferences": {},
+  "command_patterns": {
+    "test": 1,
+    "multi_step_task": 8
+  },
+  "successful_commands": [
+    {
+      "timestamp": "2025-12-09T19:45:31.055941",
+      "command": "test",
+      "intent": {
+        "intent": "test"
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T19:48:29.344241",
+      "command": "open calculator and calculate 5+3",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {}
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T19:48:34.843114",
+      "command": "open calculator and calculate 10*2",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {}
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T19:57:06.035433",
+      "command": "open calculator and calculate 7+8",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "open_app",
+            "params": {
+              "app": "calculator"
+            }
+          },
+          {
+            "action": "calculate",
+            "params": {
+              "expression": "7+8"
+            }
+          }
+        ]
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T20:05:08.490860",
+      "command": "show recent files",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "find_recent_files",
+            "params": {}
+          }
+        ]
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T20:05:08.594627",
+      "command": "git status",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "git_status",
+            "params": {}
+          }
+        ]
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T20:05:31.720483",
+      "command": "search for file named test",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "search_files",
+            "params": {
+              "query": "named test"
+            }
+          }
+        ]
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T20:12:01.560258",
+      "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "open_app",
+            "params": {
+              "app": "gemini"
+            }
+          }
+        ]
+      },
+      "success": true
+    },
+    {
+      "timestamp": "2025-12-09T20:18:56.569489",
+      "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+      "intent": {
+        "intent": "multi_step_task",
+        "entities": {},
+        "actions": [
+          {
+            "action": "open_app",
+            "params": {
+              "app": "gemini"
+            }
+          }
+        ]
+      },
+      "success": true
+    }
+  ],
+  "failed_commands": [],
+  "app_usage": {},
+  "file_locations": {},
+  "learned_patterns": [],
+  "feedback_history": []
+}

@@ -1,63 +1,41 @@
-beautifulsoup4==4.12.3
-blinker==1.8.2
-bottle==0.12.25
-bottle-websocket==0.2.9
-certifi==2024.7.4
-cffi==1.16.0
-charset-normalizer==3.3.2
-click==8.1.7
-colorama==0.4.6
-comtypes==1.4.4
-Eel==0.16.0
-enum34==1.1.10
-Flask==3.0.3
-future==1.0.0
-gevent==24.2.1
-gevent-websocket==0.10.1
-greenlet==3.0.3
-hugchat==0.4.8
-idna==3.7
-itsdangerous==2.2.0
-Jinja2==3.1.4
-langdetect==1.0.9
-MarkupSafe==2.1.5
-MouseInfo==0.1.3
-numpy==1.26.4
-openai==1.30.5
-pillow==10.4.0
-playsound==1.2.2
-pocketsphinx==5.0.3
-psutil==6.0.0
-pvporcupine==1.9.5
-PyAudio==0.2.14
-PyAutoGUI==0.9.54
-pycparser==2.22
-PyGetWindow==0.0.9
-PyMsgBox==1.0.9
-pyparsing==3.1.2
-pyperclip==1.9.0
-pypiwin32==223
-PyRect==0.2.0
-PyScreeze==0.1.30
-pyttsx3==2.90
-pytweening==1.2.0
-pywhatkit==5.4
-pywin32==310
-requests==2.32.3
-requests-toolbelt==1.0.0
-setuptools==70.2.0
-six==1.17.0
-sounddevice==0.4.7
-soupsieve==2.5
-SpeechRecognition==3.10.4
-spotipy==2.23.0
-typing_extensions==4.12.2
-urllib3==2.2.2
-Werkzeug==3.0.3
-whichcraft==0.6.1
-wikipedia==1.4.0
-zope.event==5.0
-zope.interface==6.4.post2
+# Core AI and API
+openai>=1.30.0
+requests>=2.32.0
+
+# Web Interface
+Eel>=0.16.0
+Flask>=3.0.0
+
+# Speech Recognition and Text-to-Speech
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
 openai-whisper
 torch
-# Ollama is a separate service, not a pip package. See https://ollama.ai/ 
+numpy>=1.26.0  # Required by whisper and torch
+
+# Spotify Integration
+spotipy>=2.23.0
+
+# Web Scraping and Parsing
+beautifulsoup4>=4.12.0
+
+# GUI Automation (for system control)
+PyAutoGUI>=0.9.50
+PyGetWindow>=0.0.9
+
+# Audio Playback
+pygame>=2.6.0
+
+# System Information (optional, for system info commands)
+psutil>=6.0.0
+
+# System Integration (Windows-specific)
+pywin32>=310
+
+# PC Control Dependencies
+pyperclip>=1.8.2  # Clipboard operations
+pycaw>=20230407  # Audio control (Windows)
+comtypes>=1.4.0  # COM interface for audio control
+pygetwindow>=0.0.9  # Window management (already included above, but listed for clarity)
+
+# Optional: Ollama is a separate service, install from https://ollama.ai/ 

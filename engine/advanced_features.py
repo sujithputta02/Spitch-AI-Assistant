@@ -65,23 +65,86 @@ def take_screenshot(speak_func=None):
     except Exception as e:
         speak_func("Sorry, I couldn't take a screenshot.")
 
-def get_system_info(speak_func=None):
-    """Get basic system information"""
+def get_system_info(speak_func=None, query=None, use_mcp=True):
+    """Get comprehensive system information including CPU, memory, disk, and network"""
     if speak_func is None:
         from engine.speak_utils import speak
         speak_func = speak
+    
+    # Try MCP first if enabled
+    if use_mcp:
+        try:
+            import asyncio
+            from engine.mcp_client import mcp_client
+            
+            # Run async MCP call
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            result = loop.run_until_complete(mcp_client.call_tool("get_system_info", {}))
+            loop.close()
+            
+            if result:
+                print("✅ Using MCP for system info")
+                speak_func(result)
+                return result
+        except Exception as e:
+            print(f"⚠️ MCP system info failed, using direct method: {e}")
+    
+    # Direct implementation (fallback or when MCP disabled)
     try:
         import platform
         import psutil
         
-        system_info = f"Operating System: {platform.system()} {platform.release()}"
-        cpu_info = f"CPU Usage: {psutil.cpu_percent()}%"
-        memory = psutil.virtual_memory()
-        memory_info = f"Memory Usage: {memory.percent}%"
+        # Get CPU usage with a short interval for more accurate reading
+        cpu_percent = psutil.cpu_percent(interval=1)
+        cpu_count = psutil.cpu_count()
         
-        speak_func(f"{system_info}. {cpu_info}. {memory_info}")
+        # Memory information
+        memory = psutil.virtual_memory()
+        memory_used_gb = memory.used / (1024**3)
+        memory_total_gb = memory.total / (1024**3)
+        
+        # Disk information
+        disk = psutil.disk_usage('/')
+        disk_used_gb = disk.used / (1024**3)
+        disk_total_gb = disk.total / (1024**3)
+        
+        # Network information
+        net_io = psutil.net_io_counters()
+        bytes_sent_mb = net_io.bytes_sent / (1024**2)
+        bytes_recv_mb = net_io.bytes_recv / (1024**2)
+        
+        # Build comprehensive response
+        if query and 'cpu' in query.lower() and not any(word in query.lower() for word in ['all', 'full', 'complete', 'everything']):
+            # CPU-specific query
+            response = f"CPU Usage: {cpu_percent}% across {cpu_count} cores"
+        elif query and 'memory' in query.lower() and not any(word in query.lower() for word in ['all', 'full', 'complete', 'everything']):
+            # Memory-specific query
+            response = f"Memory Usage: {memory.percent}% used. {memory_used_gb:.1f} GB out of {memory_total_gb:.1f} GB"
+        elif query and 'disk' in query.lower() and not any(word in query.lower() for word in ['all', 'full', 'complete', 'everything']):
+            # Disk-specific query
+            response = f"Disk Usage: {disk.percent}% used. {disk_used_gb:.1f} GB out of {disk_total_gb:.1f} GB"
+        elif query and 'network' in query.lower() and not any(word in query.lower() for word in ['all', 'full', 'complete', 'everything']):
+            # Network-specific query
+            response = f"Network: Sent {bytes_sent_mb:.1f} MB, Received {bytes_recv_mb:.1f} MB"
+        else:
+            # Full system information (default for "cpu usage" query)
+            os_info = f"{platform.system()} {platform.release()}"
+            response = (
+                f"System Status: "
+                f"CPU {cpu_percent}%, "
+                f"Memory {memory.percent}% ({memory_used_gb:.1f}/{memory_total_gb:.1f} GB), "
+                f"Disk {disk.percent}% ({disk_used_gb:.1f}/{disk_total_gb:.1f} GB), "
+                f"Network sent {bytes_sent_mb:.1f} MB, received {bytes_recv_mb:.1f} MB"
+            )
+        
+        speak_func(response)
+        return response
+        
     except Exception as e:
-        speak_func("Sorry, I couldn't get system information.")
+        error_msg = f"Sorry, I couldn't get system information: {str(e)}"
+        speak_func(error_msg)
+        return error_msg
 
 def open_file_explorer(path="", speak_func=None):
     """Open file explorer to a specific path"""

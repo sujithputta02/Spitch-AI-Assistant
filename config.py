@@ -10,7 +10,17 @@ OLLAMA_BASE_URL = 'http://localhost:11434'
 # Get your API key from: https://platform.openai.com/account/api-keys
 # Replace 'your-openai-api-key-here' with your actual API key
 # This is only used as a fallback if Ollama is not available
-OPENAI_API_KEY = 'your-openai-api-key-here'
+OPENAI_API_KEY = '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'
+
+# OpenRouter Configuration (for alternative models)
+OPENROUTER_API_KEY = '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'
+OPENROUTER_MODEL = 'openai/gpt-oss-20b:free'
+OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
+
+# Google Gemini Configuration (FREE TIER - use with caution due to rate limits)
+GOOGLE_API_KEY = 'AIzaSyAEmm2XacPh0UUIUD_aCNbZeyT5yiI5uX4'
+GOOGLE_GEMINI_MODEL = 'gemini-2.5-flash'  # Fast and free tier friendly
+GOOGLE_API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta'
 
 # Alternative: Set your API key as an environment variable
 # In Windows Command Prompt: set OPENAI_API_KEY=your-actual-key-here
@@ -57,7 +67,4 @@ WEATHER_API_KEY = 'your-weather-api-key-here'
 # Get your API key from: https://newsapi.org/
 NEWS_API_KEY = 'your-news-api-key-here'
 
-MYSQL_HOST = 'localhost'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'Sujith@20$'
-MYSQL_DATABASE = 'spitch_ai' 
+# MySQL configuration removed - using SQLite database instead 

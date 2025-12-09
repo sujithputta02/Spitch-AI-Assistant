@@ -1,0 +1,91 @@
+{
+  "time_based": {
+    "19": [
+      {
+        "command": "open notepad",
+        "timestamp": "2025-12-09T19:56:52.348673"
+      },
+      {
+        "command": "open calculator",
+        "timestamp": "2025-12-09T19:56:52.355877"
+      },
+      {
+        "command": "open notepad",
+        "timestamp": "2025-12-09T19:56:52.356692"
+      },
+      {
+        "command": "open calculator and calculate 7+8",
+        "timestamp": "2025-12-09T19:57:06.036417"
+      }
+    ],
+    "20": [
+      {
+        "command": "show recent files",
+        "timestamp": "2025-12-09T20:05:08.492393"
+      },
+      {
+        "command": "git status",
+        "timestamp": "2025-12-09T20:05:08.595601"
+      },
+      {
+        "command": "search for file named test",
+        "timestamp": "2025-12-09T20:05:31.721335"
+      },
+      {
+        "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+        "timestamp": "2025-12-09T20:12:01.562202"
+      },
+      {
+        "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+        "timestamp": "2025-12-09T20:18:56.571051"
+      }
+    ]
+  },
+  "sequences": [],
+  "app_by_time": {
+    "19": {
+      "notepad": 2,
+      "calculator": 1
+    }
+  },
+  "day_of_week": {
+    "Tuesday": [
+      {
+        "command": "open notepad",
+        "timestamp": "2025-12-09T19:56:52.348673"
+      },
+      {
+        "command": "open calculator",
+        "timestamp": "2025-12-09T19:56:52.355877"
+      },
+      {
+        "command": "open notepad",
+        "timestamp": "2025-12-09T19:56:52.356692"
+      },
+      {
+        "command": "open calculator and calculate 7+8",
+        "timestamp": "2025-12-09T19:57:06.036417"
+      },
+      {
+        "command": "show recent files",
+        "timestamp": "2025-12-09T20:05:08.492393"
+      },
+      {
+        "command": "git status",
+        "timestamp": "2025-12-09T20:05:08.595601"
+      },
+      {
+        "command": "search for file named test",
+        "timestamp": "2025-12-09T20:05:31.721335"
+      },
+      {
+        "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+        "timestamp": "2025-12-09T20:12:01.562202"
+      },
+      {
+        "command": "open gemini in browser and type i need the AI assistant premium UI for my project , can you do it in typescript ?",
+        "timestamp": "2025-12-09T20:18:56.571051"
+      }
+    ]
+  }
+}

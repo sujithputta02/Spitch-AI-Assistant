@@ -30,14 +30,14 @@ def continuous_listen():
     global continuous_listening
     while continuous_listening:
         try:
-            print("🔊 Listening for voice commands...")
+            print("[LISTENING] Listening for voice commands...")
             eel.DisplayMessage("Listening... Say 'stop' or 'goodbye' to stop me")
             
             # Take a voice command
             query = takeCommand()
             
             if query:
-                print(f"🎤 Heard: {query}")
+                print(f"[HEARD] Heard: {query}")
                 
                 # Check for stop command first
                 if any(phrase in query.lower() for phrase in ['stop', 'stop listening', 'stop assistant', 'goodbye', 'exit', 'quit', 'bye', 'end']):
@@ -47,7 +47,7 @@ def continuous_listen():
                     break
                 
                 # Process the command directly (no wake word required)
-                print(f"🎯 Processing command: {query}")
+                print(f"[PROCESSING] Processing command: {query}")
                 processTextCommand(query)
                 
                 # Brief pause before listening again

@@ -28,13 +28,13 @@ class OllamaIntegration:
                 self.available_models = [model['name'] for model in data.get('models', [])]
                 # Also store base model names without :latest suffix
                 self.base_model_names = [name.split(':')[0] for name in self.available_models]
-                print(f"✅ Ollama service is running. Available models: {self.available_models}")
+                print(f"[OK] Ollama service is running. Available models: {self.available_models}")
                 return True
             else:
-                print(f"❌ Ollama service responded with status code: {response.status_code}")
+                print(f"[ERROR] Ollama service responded with status code: {response.status_code}")
                 return False
         except requests.exceptions.RequestException as e:
-            print(f"❌ Cannot connect to Ollama service at {self.base_url}")
+            print(f"[ERROR] Cannot connect to Ollama service at {self.base_url}")
             print(f"   Error: {e}")
             print("   Make sure Ollama is running with: ollama serve")
             return False
@@ -116,7 +116,7 @@ class OllamaIntegration:
             payload["system"] = system_prompt
         
         try:
-            print(f"🔄 Sending request to Ollama model: {actual_model_name}")
+            print(f"[PROCESSING] Sending request to Ollama model: {actual_model_name}")
             response = requests.post(
                 f"{self.base_url}/api/generate",
                 json=payload,
@@ -127,7 +127,7 @@ class OllamaIntegration:
                 data = response.json()
                 response_text = data.get("response", "")
                 if response_text.strip():
-                    print(f"✅ Ollama response received in {data.get('total_duration', 0):.2f}s")
+                    print(f"[OK] Ollama response received in {data.get('total_duration', 0):.2f}s")
                     return {
                         "success": True,
                         "response": response_text,
@@ -275,7 +275,7 @@ class SpitchOllama:
             return "I'm sorry, but I can't connect to my AI brain right now. Please make sure Ollama is running."
         
         try:
-            print(f"🤖 Processing with Ollama ({model_to_use})...")
+            print(f"[AI] Processing with Ollama ({model_to_use})...")
             result = self.ollama.generate_response(
                 prompt=user_input,
                 model=model_to_use,
@@ -299,7 +299,7 @@ class SpitchOllama:
                     return f"I'm having trouble processing that right now. Error: {error_msg}"
                     
         except Exception as e:
-            print(f"❌ Ollama processing error: {e}")
+            print(f"[ERROR] Ollama processing error: {e}")
             return "I'm sorry, I encountered an unexpected error while processing your request. Please try again."
     
     def get_available_models(self) -> list:

@@ -167,7 +167,7 @@ p{
   border-radius: 10px;
   color: #fff !important;
   padding: 8px 20px !important;
-  margin: 0px 30% 24px 30% !important;    /* Center and add space from bottom */
+  margin: 0px 15% 24px 15% !important;    /* Center and add space from bottom */
   display: flex;
   align-items: center;
   min-height: 54px;
@@ -176,7 +176,7 @@ p{
 
 @media (max-width: 1200px) {
   #textInput {
-    margin: 0px 5% 16px 5% !important;
+    margin: 0px 3% 16px 3% !important;
   }
 }
 
@@ -353,4 +353,37 @@ p{
         opacity: 1;
         transform: translateY(0);
     }
+}/* Langu
+age Selection Styling */
+.dropdown-menu-dark {
+    background-color: #232b3a !important;
+    border: 1px solid #4db8ff !important;
+    box-shadow: 0 4px 15px rgba(77, 184, 255, 0.3) !important;
+}
+
+.dropdown-menu-dark .dropdown-item {
+    color: #b0c4de !important;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu-dark .dropdown-item:hover {
+    background-color: rgba(77, 184, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+.btn-outline-info {
+    border-color: #4db8ff !important;
+    color: #4db8ff !important;
+}
+
+.btn-outline-info:hover {
+    background-color: #4db8ff !important;
+    border-color: #4db8ff !important;
+    color: #fff !important;
+}
+
+#languageDropdown {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 20px;
 }

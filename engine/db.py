@@ -1,7 +1,7 @@
 import sqlite3
 
 
-conn = sqlite3.connect("sophia.db")
+conn = sqlite3.connect("spitch.db")
 
 cursor = conn.cursor()
 
@@ -25,8 +25,8 @@ cursor = conn.cursor()
 # conn.close()  # Don't forget to close the connection when done
 
 
-#testing module
-query = "OneNote"
-cursor.execute('SELECT path FROM sys_command WHERE name IN (?)', (query,))
-results = cursor.fetchall()
-print(results[0][0])
+# #testing module
+# query = "OneNote"
+# cursor.execute('SELECT path FROM sys_command WHERE name IN (?)', (query,))
+# results = cursor.fetchall()
+# # print(results[0][0])

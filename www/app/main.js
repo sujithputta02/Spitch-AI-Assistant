@@ -326,4 +326,109 @@ $(document).ready(function() {
         assistantResponseDiv.textContent = 'Your browser does not support speech recognition.';
         micBtn.style.display = 'none';
     }
-});
+});    // La
+nguage Support
+    let supportedLanguages = {};
+    let currentLanguage = 'en-US';
+
+    // Load supported languages on page load
+    function loadSupportedLanguages() {
+        // Since this is the app version, we'll use fetch instead of eel
+        fetch('/api/get_supported_languages')
+            .then(response => response.json())
+            .then(languages => {
+                supportedLanguages = languages;
+                populateLanguageMenu();
+                
+                // Get current language
+                fetch('/api/get_current_language')
+                    .then(response => response.json())
+                    .then(data => {
+                        currentLanguage = data.language;
+                        updateLanguageDisplay();
+                    });
+            });
+    }
+
+    // Populate language dropdown menu
+    function populateLanguageMenu() {
+        const languageMenu = $('#languageMenu');
+        languageMenu.empty();
+        
+        Object.keys(supportedLanguages).forEach(langCode => {
+            const language = supportedLanguages[langCode];
+            const menuItem = $(`
+                <li>
+                    <a class="dropdown-item language-option" href="#" data-lang="${langCode}">
+                        ${language.name}
+                    </a>
+                </li>
+            `);
+            languageMenu.append(menuItem);
+        });
+        
+        // Add click handlers
+        $('.language-option').click(function(e) {
+            e.preventDefault();
+            const selectedLang = $(this).data('lang');
+            changeLanguage(selectedLang);
+        });
+    }
+
+    // Change language
+    function changeLanguage(langCode) {
+        console.log('Changing language to:', langCode);
+        
+        fetch('/api/set_voice_language', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({lang_code: langCode})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                currentLanguage = langCode;
+                updateLanguageDisplay();
+                
+                // Update browser speech recognition language if available
+                if (recognition) {
+                    recognition.lang = supportedLanguages[langCode].google_code;
+                }
+                
+                // Show success message
+                const langName = supportedLanguages[langCode].name;
+                alert(`✅ Language changed to ${langName}`);
+                
+                // Update placeholder text based on language
+                updatePlaceholderText(langCode);
+            } else {
+                alert('❌ Failed to change language');
+            }
+        });
+    }
+
+    // Update language display
+    function updateLanguageDisplay() {
+        if (supportedLanguages[currentLanguage]) {
+            $('#currentLanguage').text(supportedLanguages[currentLanguage].name);
+        }
+    }
+
+    // Update placeholder text based on language
+    function updatePlaceholderText(langCode) {
+        const placeholders = {
+            'en-US': "Type your command here and press Enter... (e.g., 'what time is it', 'open notepad', 'tell me a joke')",
+            'te-IN': "మీ కమాండ్ ఇక్కడ టైప్ చేసి Enter నొక్కండి... (ఉదా: 'సమయం ఎంత', 'నోట్‌ప్యాడ్ తెరవండి', 'జోక్ చెప్పండి')",
+            'kn-IN': "ನಿಮ್ಮ ಆಜ್ಞೆಯನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಮತ್ತು Enter ಒತ್ತಿರಿ... (ಉದಾ: 'ಸಮಯ ಎಷ್ಟು', 'ನೋಟ್‌ಪ್ಯಾಡ್ ತೆರೆಯಿರಿ', 'ಜೋಕ್ ಹೇಳಿ')",
+            'ml-IN': "നിങ്ങളുടെ കമാൻഡ് ഇവിടെ ടൈപ്പ് ചെയ്ത് Enter അമർത്തുക... (ഉദാ: 'സമയം എത്ര', 'നോട്ട്പാഡ് തുറക്കുക', 'തമാശ പറയുക')",
+            'hi-IN': "अपना कमांड यहाँ टाइप करें और Enter दबाएं... (जैसे: 'समय क्या है', 'नोटपैड खोलें', 'जोक सुनाएं')"
+        };
+        
+        const placeholder = placeholders[langCode] || placeholders['en-US'];
+        $('#chatbox').attr('placeholder', placeholder);
+    }
+
+    // Initialize language support when page loads
+    $(document).ready(function() {
+        loadSupportedLanguages();
+    });
