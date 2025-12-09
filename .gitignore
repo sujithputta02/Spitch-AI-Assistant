@@ -6,3 +6,24 @@ vosk-model-small-en-us-0.15/
 .cache/ 
 __pycache__/ 
 *.db 
+
+# Configuration files with API keys
+config.py
+user_settings.json
+*.log
+audit.log
+
+# Memory and session data
+memory/
+spitch_conversations.json
+
+# Generated images
+generated_images/
+
+# Screenshots
+memory/screenshots/
+
+# Temporary files
+*.tmp
+*.temp
+cleanup_input.txt
