@@ -10,9 +10,31 @@ from engine.skill_registry import skill_registry
 
 class AITaskAgent:
     def __init__(self):
+        """Initialize the AI Task Agent"""
+        # Import image generation agent to register the skill
+        try:
+            import engine.image_generation_agent
+            print("[AITaskAgent] Image generation agent loaded")
+        except Exception as e:
+            print(f"[AITaskAgent] Could not load image generation agent: {e}")
+        
+        self.skill_registry = skill_registry
+        
+        # Initialize AI Intent Parser
+        try:
+            from engine.ai_intent_parser import AIIntentParser
+            from engine.ai_assistant import spitch_ai
+            self.intent_parser = AIIntentParser(spitch_ai)
+            print("[AITaskAgent] AI Intent Parser initialized")
+        except Exception as e:
+            print(f"[AITaskAgent] Failed to initialize AI Intent Parser: {e}")
+            self.intent_parser = None
+        
         # Initialize registry with core skills
         self._register_core_skills()
         self.available_actions = skill_registry.skills  # Backwards compatibility
+        
+        print(f"[AITaskAgent] Initialized with {len(self.available_actions)} skills")
         
     def _register_core_skills(self):
         """Register all available actions with the registry"""
@@ -42,6 +64,12 @@ class AITaskAgent:
             "Press a keyboard key or shortcut",
             {"key": "Key or combination (e.g., 'enter', 'ctrl+s')"}
         )(self.press_key_action)
+
+        skill_registry.register_skill(
+            "wait",
+            "Wait for specific duration",
+            {"seconds": "Seconds to wait"}
+        )(self.wait_action)
         
         # --- File Intelligence ---
         skill_registry.register_skill(
@@ -99,6 +127,74 @@ class AITaskAgent:
             "Calculate a mathematical expression",
             {"expression": "Math expression (e.g., '5+5')"}
         )(self.calculate_action)
+        
+        skill_registry.register_skill(
+            "play_spotify_song",
+            "Search and play a song in Spotify",
+            {"song": "Song name to search and play"}
+        )(self.play_spotify_song_action)
+        
+        # --- Browser Automation ---
+        skill_registry.register_skill(
+            "open_browser",
+            "Open a web browser for automation",
+            {"headless": "Run in headless mode (optional, default: False)"}
+        )(self.open_browser_action)
+        
+        skill_registry.register_skill(
+            "navigate_to_url",
+            "Navigate to a specific URL in the browser",
+            {"url": "URL to navigate to"}
+        )(self.navigate_to_url_action)
+        
+        skill_registry.register_skill(
+            "click_on_element",
+            "Click a web element",
+            {"selector": "CSS selector or element description", "by": "Selector type (css, xpath, id, etc.)"}
+        )(self.click_on_element_action)
+        
+        skill_registry.register_skill(
+            "fill_form_field",
+            "Fill a form input field",
+            {"selector": "Field selector or description", "value": "Value to enter"}
+        )(self.fill_form_field_action)
+        
+        skill_registry.register_skill(
+            "extract_text",
+            "Extract text from a web element",
+            {"selector": "Element selector", "all": "Extract from all matching elements (optional)"}
+        )(self.extract_text_action)
+        
+        skill_registry.register_skill(
+            "take_page_screenshot",
+            "Take a screenshot of the current page",
+            {"filename": "Screenshot filename (optional)"}
+        )(self.take_page_screenshot_action)
+        
+        skill_registry.register_skill(
+            "submit_form",
+            "Submit a web form",
+            {"selector": "Form selector (optional)"}
+        )(self.submit_form_action)
+        
+        skill_registry.register_skill(
+            "scroll_page",
+            "Scroll the page",
+            {"direction": "Scroll direction (up/down)", "amount": "Pixels to scroll (optional)"}
+        )(self.scroll_page_action)
+        
+        skill_registry.register_skill(
+            "close_browser",
+            "Close the web browser",
+            {}
+        )(self.close_browser_action)
+        
+        # Register take_screenshot as alias (for backward compatibility with AI intent parser)
+        skill_registry.register_skill(
+            "take_screenshot",
+            "Take a screenshot (browser or desktop)",
+            {"filename": "Screenshot filename (optional)"}
+        )(self.take_screenshot_action)
     
     def parse_complex_command(self, command: str) -> List[Dict[str, Any]]:
         """Parse a complex natural language command into actionable steps - ALL-ROUNDER VERSION"""
@@ -129,8 +225,74 @@ class AITaskAgent:
                     steps.append({'action': 'open_website', 'params': {'url': urls[site]}})
                     break
         
+        # ===== BROWSER AUTOMATION =====
+        elif ('open browser' in command_lower or 'start browser' in command_lower) and 'automation' not in command_lower:
+            # "open browser" or "open browser and go to google.com"
+            steps.append({'action': 'open_browser', 'params': {}})
+            
+            # Check for URL to navigate to
+            url_match = re.search(r'(?:go to|navigate to|open)\s+([^\s]+\.[^\s,]+)', command_lower)
+            if url_match:
+                url = url_match.group(1)
+                steps.append({'action': 'navigate_to_url', 'params': {'url': url}})
+            
+            # Check for search action
+            search_match = re.search(r'(?:search|find)\s+(?:for\s+)?(.+?)(?:\s+and|\s+then|$)', command_lower)
+            if search_match and not url_match:
+                query = search_match.group(1).strip()
+                steps.append({'action': 'navigate_to_url', 'params': {'url': f'https://www.google.com/search?q={query}'}})
+        
+        elif 'fill' in command_lower and ('form' in command_lower or 'field' in command_lower or 'box' in command_lower or 'input' in command_lower):
+            # "fill the search box with laptop" or "fill form field username with john"
+            field_match = re.search(r'fill\s+(?:the\s+)?(?:form\s+)?(?:field\s+)?(.+?)\s+with\s+["\']?(.+?)["\']?(?:\s+and|\s+then|$)', command_lower)
+            if field_match:
+                field = field_match.group(1).strip()
+                value = field_match.group(2).strip()
+                steps.append({'action': 'fill_form_field', 'params': {'selector': field, 'value': value}})
+                
+                # Check for submit action
+                if 'submit' in command_lower or 'press enter' in command_lower or 'click search' in command_lower:
+                    steps.append({'action': 'submit_form', 'params': {}})
+        
+        elif 'click' in command_lower and ('button' in command_lower or 'link' in command_lower or 'element' in command_lower):
+            # "click the login button" or "click on search"
+            element_match = re.search(r'click\s+(?:on\s+)?(?:the\s+)?(.+?)(?:\s+button|\s+link|\s+element|$)', command_lower)
+            if element_match:
+                element = element_match.group(1).strip()
+                # Convert to selector
+                selector = f"button:contains('{element}'), a:contains('{element}'), [value*='{element}']"
+                steps.append({'action': 'click_on_element', 'params': {'selector': selector}})
+        
+        elif 'screenshot' in command_lower and 'page' in command_lower:
+            # "take a screenshot of the page" or "screenshot the page"
+            filename_match = re.search(r'(?:save as|name it|called)\s+(.+)', command_lower)
+            filename = filename_match.group(1).strip() if filename_match else None
+            steps.append({'action': 'take_page_screenshot', 'params': {'filename': filename}})
+        
+        elif 'extract' in command_lower and 'text' in command_lower:
+            # "extract all product titles" or "get text from heading"
+            selector_match = re.search(r'(?:extract|get)\s+(?:all\s+)?(?:text from\s+)?(.+)', command_lower)
+            if selector_match:
+                selector = selector_match.group(1).strip()
+                extract_all = 'all' in command_lower
+                steps.append({'action': 'extract_text', 'params': {'selector': selector, 'all': extract_all}})
+        
+        elif 'close browser' in command_lower:
+            # "close the browser" or "close browser"
+            steps.append({'action': 'close_browser', 'params': {}})
+        
+        # ===== SPOTIFY / MEDIA OPERATIONS =====
+        elif 'open' in command_lower and 'spotify' in command_lower and 'play' in command_lower:
+            # "open spotify and play X"
+            song_match = re.search(r'play\s+(.+?)(?:\s+on\s+spotify|$)', command_lower)
+            if song_match:
+                song = song_match.group(1).strip()
+                # Use dedicated Spotify action with window management
+                steps.append({'action': 'play_spotify_song', 'params': {'song': song}})
+
+        # ===== MUSIC/MEDIA (YOUTUBE) =====
         elif 'play' in command_lower and 'youtube' in command_lower:
-            # "play X on youtube"
+            # "play X on youtube" - Existing logic
             video_match = re.search(r'play\s+(.+?)\s+on\s+youtube', command_lower)
             if video_match:
                 query = video_match.group(1).strip()
@@ -151,20 +313,38 @@ class AITaskAgent:
                 steps.append({'action': 'calculate', 'params': {'expression': expression}})
         
         # ===== NOTEPAD/TEXT EDITOR OPERATIONS =====
-        elif 'open' in command_lower and 'write' in command_lower:
+        # ===== NOTEPAD/TEXT EDITOR OPERATIONS =====
+        elif 'open' in command_lower and ('write' in command_lower or 'type' in command_lower):
             # "open notepad, write X, save file"
+            # "open notepad and create a file called X and type Y..."
             app_match = re.search(r'open\s+(\w+)', command_lower)
             if app_match:
                 app_name = app_match.group(1)
                 steps.append({'action': 'open_app', 'params': {'app': app_name}})
             
-            write_match = re.search(r'write\s+(.+?)(?:\s+and\s+save|\s+save|,|$)', command_lower)
-            if write_match:
-                text = write_match.group(1).strip()
+            # Content extraction
+            # Look for "type X" or "write X" - handle quotes or "inside the file"
+            content_match = re.search(r'(?:type|write)\s+(?:["\'])(.+?)(?:["\'])', command_lower) # Strong quote match first
+            if not content_match:
+                # Fallback to loose match up to next keyword
+                content_match = re.search(r'(?:type|write)\s+(.+?)(?:\s+inside|\s+in\s+the|\s+and\s+save|\s+save|\s+to\s+file|$)', command_lower)
+            
+            if content_match:
+                text = content_match.group(1).strip()
                 steps.append({'action': 'type_text', 'params': {'text': text}})
             
+            # Save logic
             if 'save' in command_lower:
                 steps.append({'action': 'press_key', 'params': {'key': 'ctrl+s'}})
+                
+                # Check for filename to handle "Save As" argument
+                # "create a file called X" or "save it as X" or "named X"
+                file_match = re.search(r'(?:called|named|save\s+as)\s+([^\s,]+)', command_lower)
+                if file_match:
+                    filename = file_match.group(1).strip()
+                    # Wait for dialog and type filename
+                    steps.append({'action': 'type_text', 'params': {'text': filename}})
+                    steps.append({'action': 'press_key', 'params': {'key': 'enter'}})
         
         # ===== FILE OPERATIONS =====
         elif 'create file' in command_lower or 'write file' in command_lower:
@@ -338,10 +518,9 @@ class AITaskAgent:
         if not steps:
             print("[AITaskAgent] No pattern match, using AI intent parser...")
             try:
-                from engine.ai_intent_parser import ai_intent_parser
-                
-                if ai_intent_parser:
-                    intent_data = ai_intent_parser.parse_intent(command)
+                import traceback
+                if self.intent_parser:
+                    intent_data = self.intent_parser.parse_intent(command)
                     
                     if intent_data['confidence'] > 0.5 and intent_data['actions']:
                         print(f"[AITaskAgent] AI parsed intent: {intent_data['intent']} (confidence: {intent_data['confidence']})")
@@ -352,6 +531,7 @@ class AITaskAgent:
                     print("[AITaskAgent] AI intent parser not initialized")
             except Exception as e:
                 print(f"[AITaskAgent] AI intent parsing failed: {e}")
+                traceback.print_exc()
         
         if not steps:
             return {
@@ -364,8 +544,9 @@ class AITaskAgent:
         # Execute each step WITH RETRY LOGIC
         results = []
         for i, step in enumerate(steps):
-            action = step['action']
-            params = step['params']
+            # Handle both 'action' and 'type' keys (AI intent parser uses 'type')
+            action = step.get('action') or step.get('type')
+            params = step.get('params', {})
             
             print(f"[AITaskAgent] Step {i+1}/{len(steps)}: {action} with params {params}")
             
@@ -376,6 +557,12 @@ class AITaskAgent:
                 if success:
                     results.append({'step': i+1, 'action': action, 'success': True, 'result': result})
                     print(f"[AITaskAgent] Step {i+1} completed successfully")
+                    
+                    # Add delay after opening apps to allow load time
+                    if action == 'open_app':
+                        import time
+                        print("[AITaskAgent] Waiting 5s for app to launch...")
+                        time.sleep(5.0)
                 else:
                     error_msg = f"Error in step {i+1}: {result}"
                     results.append({'step': i+1, 'action': action, 'success': False, 'error': error_msg})
@@ -446,7 +633,10 @@ class AITaskAgent:
         
         for attempt in range(max_retries):
             try:
-                result = self.available_actions[action](**params)
+                # Get the function from the skill dict
+                skill_info = self.available_actions[action]
+                skill_func = skill_info['func'] if isinstance(skill_info, dict) else skill_info
+                result = skill_func(**params)
                 return (True, result)
             except Exception as e:
                 print(f"[AITaskAgent] Attempt {attempt + 1}/{max_retries} failed: {e}")
@@ -467,7 +657,9 @@ class AITaskAgent:
         command_lower = command.lower()
         
         # Contextual responses based on command type
-        if 'open' in command_lower and 'write' in command_lower:
+        if 'spotify' in command_lower and 'play' in command_lower:
+            return "Spotify opened. Please search for your song manually, or say 'play [song] on youtube' for automatic playback."
+        elif 'open' in command_lower and 'write' in command_lower:
             return "Done. I've opened the application and entered your text."
         elif 'calculate' in command_lower or 'what is' in command_lower:
             return "Calculation complete."
@@ -558,6 +750,12 @@ class AITaskAgent:
         except Exception as e:
             return f"Could not set volume: {e}"
     
+    def wait_action(self, seconds: float):
+        """Wait for a specified duration"""
+        import time
+        time.sleep(float(seconds))
+        return f"Waited {seconds}s"
+    
     def lock_screen_action(self):
         """Lock the computer screen"""
         import subprocess
@@ -625,12 +823,33 @@ class AITaskAgent:
         else:
             return f"File not found: {old_path}"
     
-    def take_screenshot_action(self, filename: str):
-        """Take a screenshot"""
-        import pyautogui
-        screenshot = pyautogui.screenshot()
-        screenshot.save(filename)
-        return f"Screenshot saved as {filename}"
+    def take_screenshot_action(self, filename: str = None):
+        """Take a screenshot - uses browser automation if browser is open, otherwise desktop screenshot"""
+        try:
+            # Check if browser is open - if so, use browser screenshot
+            from engine.browser_automation import browser_automation
+            
+            if browser_automation.is_browser_open():
+                # Use browser screenshot
+                filepath = browser_automation.take_screenshot(filename)
+                if filepath:
+                    return f"Screenshot saved: {filepath}"
+                else:
+                    return "Failed to take browser screenshot"
+            else:
+                # Fall back to desktop screenshot
+                import pyautogui
+                from datetime import datetime
+                
+                if not filename:
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"screenshot_{timestamp}.png"
+                
+                screenshot = pyautogui.screenshot()
+                screenshot.save(filename)
+                return f"Screenshot saved as {filename}"
+        except Exception as e:
+            return f"Error taking screenshot: {e}"
     
     def calculate_action(self, expression: str):
         """Calculate a mathematical expression by typing into calculator - ENHANCED"""
@@ -704,6 +923,120 @@ class AITaskAgent:
                 return f"{expression} = {result}"
             except:
                 return f"Could not calculate: {e}"
+    
+    def play_spotify_song_action(self, song: str):
+        """Search and play a song in Spotify with robust window management"""
+        try:
+            import pyautogui
+            import pygetwindow as gw
+            import time
+            from engine.features import openCommand
+            
+            # Step 1: Open Spotify
+            print(f"[Spotify] Opening Spotify...")
+            openCommand("open spotify")
+            time.sleep(6)  # Wait for Spotify to fully load
+            
+            # Step 2: Find and focus Spotify window
+            print(f"[Spotify] Finding Spotify window...")
+            spotify_windows = []
+            
+            # Try multiple window title patterns
+            title_patterns = ['Spotify Premium', 'Spotify Free', 'Spotify', 'spotify']
+            
+            for pattern in title_patterns:
+                try:
+                    windows = gw.getWindowsWithTitle(pattern)
+                    if windows:
+                        spotify_windows.extend(windows)
+                        break
+                except Exception as e:
+                    print(f"[Spotify] Error searching for '{pattern}': {e}")
+            
+            if spotify_windows:
+                spotify_window = spotify_windows[0]
+                print(f"[Spotify] Found window: {spotify_window.title}")
+                
+                # Restore if minimized
+                if spotify_window.isMinimized:
+                    spotify_window.restore()
+                    time.sleep(0.5)
+                
+                # Bring to front and activate
+                spotify_window.activate()
+                time.sleep(1.0)
+                
+                # Click on window to ensure focus
+                try:
+                    center_x = spotify_window.left + spotify_window.width // 2
+                    center_y = spotify_window.top + spotify_window.height // 2
+                    pyautogui.click(center_x, center_y)
+                    time.sleep(0.5)
+                except:
+                    pass
+            else:
+                print("[Spotify] Warning: Could not find Spotify window, proceeding anyway...")
+                time.sleep(2)
+            
+            # Step 3: Focus search bar (Ctrl+L)
+            print(f"[Spotify] Focusing search bar...")
+            pyautogui.hotkey('ctrl', 'l')
+            time.sleep(0.8)
+            
+            # Step 4: Clear any existing text
+            pyautogui.hotkey('ctrl', 'a')
+            time.sleep(0.2)
+            
+            # Step 5: Type song name
+            print(f"[Spotify] Typing song: {song}")
+            pyautogui.write(song, interval=0.05)
+            time.sleep(0.5)
+            
+            # Step 6: Press Enter to search
+            print(f"[Spotify] Searching...")
+            pyautogui.press('enter')
+            time.sleep(3.0)  # Wait for search results
+            
+            # Step 7: Click on the Play button in "Top result" card
+            # The play button (green circle) appears on the right side of the album art
+            print(f"[Spotify] Clicking on Play button in Top Result...")
+            try:
+                if spotify_windows:
+                    # The play button is on the right side of the Top Result card
+                    # Approximately 55% from left, 28% from top
+                    play_button_x = spotify_window.left + int(spotify_window.width * 0.55)
+                    play_button_y = spotify_window.top + int(spotify_window.height * 0.28)
+                    
+                    # Click on the play button to open song page
+                    print(f"[Spotify] Clicking at position ({play_button_x}, {play_button_y})...")
+                    pyautogui.click(play_button_x, play_button_y)
+                    time.sleep(1.5)  # Wait for song page to load
+                    
+                    # Step 8: Click the green play button on the song page
+                    # This button appears on the left-center area, below the album art
+                    print(f"[Spotify] Clicking green play button on song page...")
+                    # Green play button is approximately 30% from left, 35% from top
+                    song_play_x = spotify_window.left + int(spotify_window.width * 0.30)
+                    song_play_y = spotify_window.top + int(spotify_window.height * 0.35)
+                    
+                    pyautogui.click(song_play_x, song_play_y)
+                    time.sleep(0.5)
+                    
+                    print(f"[Spotify] Song should now be playing!")
+                else:
+                    # Fallback: just press Space
+                    pyautogui.press('space')
+            except Exception as e:
+                print(f"[Spotify] Click failed: {e}")
+                # Fallback to Space key
+                pyautogui.press('space')
+            
+            return f"Playing '{song}' on Spotify"
+            
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return f"Could not play song on Spotify: {e}"
     
     # ===== FILE INTELLIGENCE ACTIONS =====
     def organize_files_action(self, directory: str = None):
@@ -835,6 +1168,165 @@ class AITaskAgent:
                 return f"Command failed: {result.get('error', 'Unknown error')}"
         except Exception as e:
             return f"Error running command: {e}"
+    
+    # ===== BROWSER AUTOMATION ACTIONS =====
+    def open_browser_action(self, headless: bool = False):
+        """Open a web browser for automation"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if browser_automation.is_browser_open():
+                return "Browser is already open"
+            
+            success = browser_automation.initialize_driver(headless=headless)
+            if success:
+                return "Browser opened successfully"
+            else:
+                return "Failed to open browser. Make sure Chrome is installed."
+        except Exception as e:
+            return f"Error opening browser: {e}"
+    
+    def navigate_to_url_action(self, url: str):
+        """Navigate to a URL in the browser"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                # Auto-open browser if not open
+                browser_automation.initialize_driver()
+            
+            success = browser_automation.navigate_to(url)
+            if success:
+                return f"Navigated to {url}"
+            else:
+                return f"Failed to navigate to {url}"
+        except Exception as e:
+            return f"Error navigating: {e}"
+    
+    def click_on_element_action(self, selector: str, by: str = 'css'):
+        """Click a web element"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            success = browser_automation.click_element(selector, by)
+            if success:
+                return f"Clicked element: {selector}"
+            else:
+                return f"Failed to click element: {selector}"
+        except Exception as e:
+            return f"Error clicking element: {e}"
+    
+    def fill_form_field_action(self, selector: str, value: str, by: str = 'css'):
+        """Fill a form input field"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            # Try common input selectors if selector is a description
+            if ' ' in selector and not selector.startswith('['):
+                # Convert description to selector
+                # e.g., "search box" -> "input[name*='search'], input[placeholder*='search']"
+                selector = f"input[name*='{selector}'], input[placeholder*='{selector}'], input[id*='{selector}']"
+            
+            success = browser_automation.fill_input(selector, value, by)
+            if success:
+                return f"Filled field '{selector}' with '{value}'"
+            else:
+                return f"Failed to fill field: {selector}"
+        except Exception as e:
+            return f"Error filling field: {e}"
+    
+    def extract_text_action(self, selector: str, all: bool = False, by: str = 'css'):
+        """Extract text from a web element"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            if all:
+                texts = browser_automation.get_all_text(selector, by)
+                if texts:
+                    return f"Found {len(texts)} elements:\n" + "\n".join(texts[:10])
+                else:
+                    return "No text found"
+            else:
+                text = browser_automation.get_text(selector, by)
+                if text:
+                    return f"Text: {text}"
+                else:
+                    return "No text found"
+        except Exception as e:
+            return f"Error extracting text: {e}"
+    
+    def take_page_screenshot_action(self, filename: str = None):
+        """Take a screenshot of the current page"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            filepath = browser_automation.take_screenshot(filename)
+            if filepath:
+                return f"Screenshot saved: {filepath}"
+            else:
+                return "Failed to take screenshot"
+        except Exception as e:
+            return f"Error taking screenshot: {e}"
+    
+    def submit_form_action(self, selector: str = None, by: str = 'css'):
+        """Submit a web form"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            success = browser_automation.submit_form(selector, by)
+            if success:
+                return "Form submitted"
+            else:
+                return "Failed to submit form"
+        except Exception as e:
+            return f"Error submitting form: {e}"
+    
+    def scroll_page_action(self, direction: str = 'down', amount: int = 300):
+        """Scroll the page"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open. Open browser first."
+            
+            success = browser_automation.scroll_page(direction, amount)
+            if success:
+                return f"Scrolled {direction}"
+            else:
+                return "Failed to scroll"
+        except Exception as e:
+            return f"Error scrolling: {e}"
+    
+    def close_browser_action(self):
+        """Close the web browser"""
+        try:
+            from engine.browser_automation import browser_automation
+            
+            if not browser_automation.is_browser_open():
+                return "Browser is not open"
+            
+            success = browser_automation.close_browser()
+            if success:
+                return "Browser closed"
+            else:
+                return "Failed to close browser"
+        except Exception as e:
+            return f"Error closing browser: {e}"
 
 # Global instance
 ai_task_agent = AITaskAgent()

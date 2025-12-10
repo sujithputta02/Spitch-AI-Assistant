@@ -39,3 +39,6 @@ comtypes>=1.4.0  # COM interface for audio control
 pygetwindow>=0.0.9  # Window management (already included above, but listed for clarity)
 
 # Optional: Ollama is a separate service, install from https://ollama.ai/ 
+# Browser Automation
+selenium>=4.15.0  # Web browser automation
+webdriver-manager>=4.0.1  # Automatic WebDriver management

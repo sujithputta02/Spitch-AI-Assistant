@@ -27,9 +27,12 @@ Spitch is a cutting-edge, JARVIS-like assistant that controls your computer, und
 
 ### ⚡ Seamless Task Execution & Browser Control
 *   **Browser Integration**: "Open Gemini **in browser**" or "Search for Python tutorials" launches your default browser (Chrome/Edge/Firefox) instantly.
+*   **🌐 NEW: Browser Automation**: Full Selenium WebDriver integration for automated web browsing, form filling, and data extraction.
+*   **Visual Indicators**: Automated browsers show a beautiful violet-cyan-rose gradient border with Spitch AI branding.
 *   **Robust Automation**: 3-stage retry logic ensures commands work even if apps are slow to load.
 *   **App Control**: Precise control over desktop applications (Notepad, Calculator, Spotify, etc.).
 *   **Window Management**: Handles minimized windows, multi-monitor setups, and focus stealing.
+*   **🎵 Spotify Automation**: Fully automated song search and playback - just say "play [song] on Spotify"!
 
 ### 🔮 Proactive Assistance
 *   **Smart Suggestions**: Suggests actions based on the time of day (e.g., "Good morning, open your email?").
@@ -104,6 +107,15 @@ This launches the modern web UI and starts the voice listener.
 *   "Launch ChatGPT in my browser."
 *   "Search for 'best pizza near me' on Google."
 
+### 🤖 **NEW: Browser Automation (Selenium)**
+*   **"Open browser and go to google.com"** - Launches Chrome with Spitch AI visual indicator.
+*   **"Fill the search box with Python tutorials and submit"** - Automated form filling.
+*   **"Take a screenshot of the page"** - Captures browser screenshots.
+*   **"Navigate to github.com and screenshot"** - Multi-step workflows.
+*   **"Click the login button"** - Element interaction.
+*   **"Extract all product titles"** - Data extraction from web pages.
+*   **Visual Indicator**: Automated browsers display a beautiful animated gradient border (violet→cyan→rose) with Spitch AI badge.
+
 ### 📂 File Management
 *   "Organize all files in my Downloads folder."
 *   "Find duplicate images in Pictures."
@@ -115,6 +127,7 @@ This launches the modern web UI and starts the voice listener.
 *   "Run 'npm install' for me."
 
 ### 🎵 Media & Entertainment
+*   **"Open Spotify and play Singari song."** - **NEW: Full Automation!** Searches and plays automatically.
 *   "Play 'Bohemian Rhapsody' on Spotify."
 *   "Find a tutorial on Python decorators on YouTube."
 *   "Set volume to 50%."
@@ -123,10 +136,46 @@ This launches the modern web UI and starts the voice listener.
 *   *(Morning)* "Good morning! Should I open your work apps?"
 *   *(System Alert)* "Disk space is running low (92%). Should we clean temporary files?"
 
-### ⚙️ **NEW: Settings & Customization**
+### ⚙️ **Settings & Customization**
 *   Click the **⚙️ Gear Icon** to access settings.
 *   Change voice, adjust speed, set your location.
 *   All preferences are saved automatically.
+
+### 🌐 **Browser Automation Features**
+
+Spitch now includes powerful browser automation using Selenium WebDriver:
+
+**🎨 Visual Indicators**
+- Animated gradient border (Violet → Cyan → Rose) around automated browsers
+- Spitch AI badge in top-right corner with 🎙️ microphone icon
+- Smooth pulsing animations and glassmorphism effects
+- Matches Spitch AI brand colors perfectly
+
+**🚀 Capabilities**
+- **Navigation**: Open any website with voice commands
+- **Form Filling**: Automatically fill and submit web forms
+- **Element Interaction**: Click buttons, links, and elements
+- **Data Extraction**: Extract text and data from web pages
+- **Screenshots**: Capture page screenshots automatically
+- **Multi-Step Workflows**: Chain multiple actions together
+
+**📸 Screenshot Management**
+- All screenshots saved to `browser_screenshots/` folder
+- Automatic timestamped filenames
+- High-quality PNG format
+- Works on any web page
+
+**🎯 Use Cases**
+- Automated testing of web applications
+- Data collection and web scraping
+- Form automation (surveys, registrations)
+- Price monitoring on e-commerce sites
+- Automated research and documentation
+
+**📚 Documentation**
+- See `BROWSER_AUTOMATION_GUIDE.md` for complete documentation
+- Test scripts available: `test_browser_automation.py`
+- Example commands and API reference included
 
 ---
 
@@ -147,6 +196,8 @@ This launches the modern web UI and starts the voice listener.
 *   **`engine/google_gemini.py`**: Multimodal AI integration (text + image processing).
 *   **`engine/safety_sandbox.py`**: Command validation and security layer.
 *   **`engine/user_prefs.py`**: User settings and preferences management.
+*   **`engine/browser_automation.py`**: Selenium WebDriver integration for web automation.
+*   **`engine/webdriver_setup.py`**: Automatic WebDriver management and configuration.
 
 ### Frontend
 *   **`www/index.html`**: Modern, responsive web interface with image upload support.
@@ -178,6 +229,20 @@ This launches the modern web UI and starts the voice listener.
 - Base64 encoding for efficient transfer
 - Integrated vision processing in chat flow
 
+### Phase 10: Spotify Automation
+- Fully automated Spotify song search and playback
+- Window management and UI navigation
+- Precise click positioning for play buttons
+- Robust error handling with fallbacks
+
+### Phase 11: Browser Automation
+- Full Selenium WebDriver integration
+- Automated web browsing, form filling, and data extraction
+- Visual indicators with Spitch AI branding (violet-cyan-rose gradient)
+- Screenshot capture and page manipulation
+- Multi-step workflow support
+- 26 registered skills including browser automation
+
 ---
 
 ## 📋 Requirements
@@ -193,12 +258,15 @@ requests
 beautifulsoup4
 pygame
 Pillow
+selenium>=4.15.0
+webdriver-manager>=4.0.1
 ```
 
 ### System Requirements
 - **OS**: Windows 10/11 (primary), macOS/Linux (experimental)
 - **Python**: 3.8+
 - **Browser**: Chrome, Edge, or Firefox
+- **Chrome Browser**: Required for browser automation features
 - **Internet**: Required for AI models (Gemini/OpenAI) and web features
 
 ### API Keys (Optional but Recommended)

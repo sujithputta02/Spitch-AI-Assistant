@@ -52,6 +52,16 @@ from engine.features import openCommand, PlayYoutube, toggle_youtube_playback, h
 from engine.weather import get_weather
 from engine.user_prefs import set_user_location
 
+# Import AI Task Agent for skill-based command execution
+try:
+    from engine.ai_task_agent import ai_task_agent
+    AI_TASK_AGENT_AVAILABLE = True
+    print("[OK] AI Task Agent available")
+except ImportError as e:
+    print(f"[WARNING] AI Task Agent not available: {e}")
+    AI_TASK_AGENT_AVAILABLE = False
+    ai_task_agent = None
+
 # --- WHISPER SPEECH RECOGNITION SETUP ---
 if WHISPER_AVAILABLE:
     # Check if a CUDA-enabled GPU is available, otherwise use CPU
@@ -448,6 +458,17 @@ def processTextCommand(query, image_base64=None):
         ('play' in query.lower() and 'youtube' in query.lower()),  # NEW: play on youtube
         ('calculate' in query.lower() or 'what is' in query.lower()),  # NEW: calculations
         ('take screenshot' in query.lower() or 'screenshot' in query.lower()),  # NEW: screenshots
+        ('generate' in query.lower() and 'image' in query.lower()),  # NEW: image generation
+        ('create' in query.lower() and ('image' in query.lower() or 'picture' in query.lower())),  # NEW: create image/picture
+        ('make' in query.lower() and ('image' in query.lower() or 'picture' in query.lower())),  # NEW: make image/picture
+        # BROWSER AUTOMATION PATTERNS
+        ('open browser' in query.lower() or 'start browser' in query.lower()),  # NEW: browser automation
+        ('close browser' in query.lower()),  # NEW: close browser
+        ('fill' in query.lower() and any(word in query.lower() for word in ['form', 'field', 'box', 'input'])),  # NEW: form filling
+        ('click' in query.lower() and any(word in query.lower() for word in ['button', 'link', 'element'])),  # NEW: clicking elements
+        ('extract' in query.lower() and 'text' in query.lower()),  # NEW: text extraction
+        ('screenshot' in query.lower() and 'page' in query.lower()),  # NEW: page screenshot
+        ('navigate to' in query.lower() or 'go to' in query.lower()),  # NEW: navigation
     ]
     
     if AI_TASK_AGENT_AVAILABLE and any(complex_patterns):
@@ -594,6 +615,22 @@ def test_command():
     """Test function to verify basic command processing is working"""
     speak("Testing command processing. This should work immediately.")
     return "Test successful"
+
+@eel.expose
+def get_real_system_stats():
+    """Get real-time system statistics for the UI HUD."""
+    try:
+        import psutil
+        cpu = psutil.cpu_percent(interval=None)
+        memory = psutil.virtual_memory()
+        # Convert total memory to GB with 1 decimal place
+        ram_gb = f"{memory.total / (1024**3):.1f}G"
+        ram_percent = memory.percent
+        return {'cpu': cpu, 'ram_total': ram_gb, 'ram_percent': ram_percent}
+    except Exception as e:
+        print(f"Error getting system stats: {e}")
+        return {'cpu': 0, 'ram_total': '0G', 'ram_percent': 0}
+
 
 @eel.expose
 def allCommands():
